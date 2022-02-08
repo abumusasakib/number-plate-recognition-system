@@ -612,15 +612,15 @@ def send_sms(phone_number, message):
     url = "https://api.smsq.global/api/v2/SendSMS"
 
     querystring = {
-        "SenderId": "8804445649826",
+        "SenderId": "U2FsdGVkX186s6V4vSi9wVdUBWO4Voeeus3N/cIJYbY=",
         "Is_Unicode": True,
         "Is_Flash": False,
         "SchedTime": "",
         "GroupId": "",
         "Message": message,
         "MobileNumbers": phone_number,
-        "ApiKey": "WDoKYJPIUu/5jVnfTwR1tTb5z46ZQ3fsYzqlCkg6mTI=",
-        "ClientId": "24502137-4ea0-4be2-8db8-02e087f84118"
+        "ApiKey": "U2FsdGVkX18xmrC0Iy+id3ve7jL0lecdU9WGtpStp7pcrZgb1tGQooyOxRPfouMbFGm3fZfXOcuHdL7MXUVcBw==",
+        "ClientId": "U2FsdGVkX19I7T8DxR8Jfq3bG0M5Q6xrsQicz77Ipo3SsSrg+8yjMJQEL/AsM5WYvtA+bxwOqrc8cY+9waF86A=="
     }
 
     headers = {
@@ -682,8 +682,8 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
         envelope.add_attachment(attachment_file)
     
     # Send the envelope using an ad-hoc connection...
-    envelope.send('smtp.office365.com', login='sakib4@live.com',
-                password='theMGFboys01', tls=True)
+    envelope.send('smtp.office365.com', login='U2FsdGVkX181W1K/dY6s/I7Bn57Wdyw167yTZSuPsx4=',
+                password='U2FsdGVkX1+6UcYkbl5/yNzRUVSFVTEYoNwSnz6TM1E=', tls=True)
 
     showinfo(
         title='Email',
@@ -743,8 +743,8 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
     s = smtplib.SMTP(host='smtp.office365.com', port=587)
     s.starttls()
 
-    MY_ADDRESS = "sakib4@live.com"
-    PASSWORD = "theMGFboys01"
+    MY_ADDRESS = "U2FsdGVkX1/M0zTlgIndyiTe36i6sWEAhAgIc9aElYg="
+    PASSWORD = "U2FsdGVkX1+J/nOcGkF0cD/ojomxGaVccDg/7KgO3rY="
     s.login(MY_ADDRESS, PASSWORD)
     print("Set up complete")
 
