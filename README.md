@@ -1,6 +1,8 @@
 # number-plate-recognition-system
 A Bangla number plate recognition system made using Python and done by me and my teammates from IUB for our Senior Project
 
+Streets and parkways are one of the main methods of transport and there should be a few guidelines and guidelines to guarantee that everything is good to go. Street rules are intended to safeguard us and different drivers out and about and to keep up with appropriate traffic stream. Auto collisions are principally brought about by infringement of transit regulations. Street mishaps kill 12,000 individuals and cause 35,000 wounds in Bangladesh every year, says the Accident Research Institute of the state-run Bangladesh University of Engineering and Technology. We are making a framework to perceive number plates and speed of a vehicle. Our venture dispenses with the manual course of recognizing traffic wrongdoers. This decreases staff and permits us to make required moves quicker.
+
 # Dependencies
 1. **imutils**
 2. **pytesseract**, **Tesseract-OCR** (configure for bangla ocr)
