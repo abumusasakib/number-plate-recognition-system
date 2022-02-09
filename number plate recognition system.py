@@ -54,6 +54,7 @@ sys_manager_email = "1810617@iub.edu.bd"
 
 # database functions
 
+opened_img = ''
 
 # table create functions
 def create_plate_table():
@@ -968,7 +969,9 @@ def camera_recognize():
     root.destroy()
 
 def image_recognize():
-    global img
+    global img,camera,closed,opened_img
+    camera = False
+    closed = False
     filetypes = (
         ('JPG files', '*.jpg *.jpeg'),
         ('BMP files', '*.bmp'),
@@ -977,14 +980,14 @@ def image_recognize():
     )
 
     flush_input()
-    filename = fd.askopenfilename(
+    opened_img = fd.askopenfilename(
         title='Select an image file for number plate recognition',
         initialdir='/sample/test/',
         filetypes=filetypes
     )
 
-    if filename != '':
-        img = cv2.imread(filename)
+    if opened_img != '':
+        img = cv2.imread(opened_img)
         global root
         root.destroy()
     else:
@@ -1522,7 +1525,8 @@ root.mainloop()
 while True:
     if camera == True:
         success, img = cap.read()
-
+    else:
+        img = cv2.imread(opened_img)
     if closed == True:
         print("Closing...")
         cv2.destroyAllWindows()
@@ -2023,7 +2027,7 @@ while True:
 
     # press 'm' to generate money receipt of all dues and send bulk email
     if keyboard.is_pressed("m"):
-        generate_money_receipt_and_send_mail()
+        generate_money_receipt_and_send_bulk_mail()
 
     # press 'g' to run sftp server
     if keyboard.is_pressed("g"):
@@ -2033,5 +2037,7 @@ while True:
     if keyboard.is_pressed("q"):
         print("Closing...")
         flush_input()
+        cap.release()
+        cv2.destroyWindow("Output")
         break
 cv2.destroyAllWindows()
