@@ -1,5 +1,5 @@
 # number-plate-recognition-system
-A Bangla number plate recognition system using Python done by me and my teammates from IUB for our Senior Project
+A Bangla number plate recognition system made using Python and done by me and my teammates from IUB for our Senior Project
 
 # Dependencies
 1. **imutils**
