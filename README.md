@@ -4,24 +4,23 @@ A Bangla number plate recognition system made using Python and done by me and my
 Streets and parkways are one of the main methods of transport and there should be a few guidelines and guidelines to guarantee that everything is good to go. Street rules are intended to safeguard us and different drivers out and about and to keep up with appropriate traffic stream. Auto collisions are principally brought about by infringement of transit regulations. Street mishaps kill 12,000 individuals and cause 35,000 wounds in Bangladesh every year, says the Accident Research Institute of the state-run Bangladesh University of Engineering and Technology. We are making a framework to perceive number plates and speed of a vehicle. Our venture dispenses with the manual course of recognizing traffic wrongdoers. This decreases staff and permits us to make required moves quicker.
 
 # Dependencies
-1. **imutils**
-2. **pytesseract**, **Tesseract-OCR** (configure for bangla ocr)
-3. **numpy**
-4. **cv2** (install by running "pip install opencv-contrib-python")
-5. **PIL** (for image resizing and processing)
-6. **datetime**, **time**
-7. **mysql.connector** (for database connection) (install by running "pip install mysql-connector-python")
-8. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server)
-9. **os** (for running the sftp application "Rebex Tiny SFTP Server")
-10. **keyboard**
-11. **tkinter** (for GUI)
-12. **prettytable** (for report and receipt generate)
-13. **requests**, **json** (for accessing SMSQ's SMS API)
-14. **pywhatkit**, **pyautogui** (for optional WhatsApp message sending)
-15. **envelopes** (for single mail)
-16. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
-17. **msvcrt**, **sys**, **termios** (for input flushing)
-18. **pdfkit**, **wkhtmlpdf** (for converting html to pdf) (install Chocolatey and run "choco install wkhtmltopdf" to install wkhtmlpdf)
+1. **pytesseract**, **Tesseract-OCR** (configure for bangla ocr)
+2. **numpy**
+3. **cv2** (install by running "pip install opencv-contrib-python")
+4. **PIL** (for image resizing and processing)
+5. **datetime**, **time**
+6. **mysql.connector** (for database connection) (install by running "pip install mysql-connector-python")
+7. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server)
+8. **os** (for running the sftp application "Rebex Tiny SFTP Server")
+9. **keyboard**
+10. **tkinter** (for GUI)
+11. **prettytable** (for report and receipt generate)
+12. **requests**, **json** (for accessing SMSQ's SMS API)
+13. **pywhatkit**, **pyautogui** (for optional WhatsApp message sending)
+14. **envelopes** (for single mail)
+15. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
+16. **msvcrt**, **sys**, **termios** (for input flushing)
+17. **pdfkit**, **wkhtmlpdf** (for converting html to pdf) (install Chocolatey and run "choco install wkhtmltopdf" to install wkhtmlpdf)
 
 # How to Run
 1. Install Python and the dependencies
