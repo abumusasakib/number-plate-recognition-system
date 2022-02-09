@@ -991,7 +991,7 @@ def camera_recognize():
 
 
 def image_recognize():
-    global img, camera, closed, opened_img
+    global camera, closed, opened_img
     camera = False
     closed = False
     filetypes = (
