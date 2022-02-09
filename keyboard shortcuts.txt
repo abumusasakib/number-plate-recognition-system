@@ -1,9 +1,6 @@
 Keyboard shortcuts while camera or image is open:
-
 Press 's' to take still image from camera and recognise number plate
 Press 'h' to show keyboard shortcuts
-Press 'i' to recognize number plate from image
-Press 'v' to open camera for number plate recognition
 Press 't' to write the detected number plate to text file
 Press 'd' to write the detected number plate to database
 Press 'l' to show all data from database

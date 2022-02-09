@@ -49,8 +49,8 @@ attachment_file = ''
 query_result = ''
 
 sys_manager_name = "System Manager"
-sys_manager_phone_number = 8801721934231
-sys_manager_email = "1810617@iub.edu.bd"
+sys_manager_phone_number = "U2FsdGVkX1/R6VSNmAcr2JF+VV/h13H1M3Y2viCRGPE="
+sys_manager_email = "U2FsdGVkX194cTLJUZIBBgZWATQbbwYLzEoZ7kLQm56ekmgBp808Umsoh4jmuKfq"
 
 # database functions
 
@@ -612,15 +612,15 @@ def send_sms(phone_number, message):
     url = "https://api.smsq.global/api/v2/SendSMS"
 
     querystring = {
-        "SenderId": "8804445649826",
+        "SenderId": "U2FsdGVkX1/sNVLkZ7alPXVfo7bWg06REGw2OzhMKbE=",
         "Is_Unicode": True,
         "Is_Flash": False,
         "SchedTime": "",
         "GroupId": "",
         "Message": message,
         "MobileNumbers": phone_number,
-        "ApiKey": "WDoKYJPIUu/5jVnfTwR1tTb5z46ZQ3fsYzqlCkg6mTI=",
-        "ClientId": "24502137-4ea0-4be2-8db8-02e087f84118"
+        "ApiKey": "U2FsdGVkX1+i095rqKcZeQFyvaBUcJq9zBo4asfNR7DJ828nZfGrdlPMmawrmSU4hLS+G2qvDUE8ig+hV+IATw==",
+        "ClientId": "U2FsdGVkX1/857tok/i2JIfniCKC4GovzXof0OFoVDlgNE0r5eT5tbKHL6VLzgnLldy8rD5z/fU+2/9iiexYqg=="
     }
 
     headers = {
@@ -644,17 +644,14 @@ def send_sms(phone_number, message):
 
             file = open("sent_sms_log.txt", 'a', encoding='utf-8')
             file.write("Sent message at: "+date_time_formal+"\n" +
-                        "Phone Number is:"+phone_number+"\n" +
+                        "Phone Number is:"+str(phone_number)+"\n" +
                         "Message:"+message+"\n")
             file.close()
         else:
             print("Oops! Something wrong. Error has occured with error code: ",
                 result["ErrorCode"], "and description", result["ErrorDescription"])
     except Exception as e:
-        showerror(
-            title='Error',
-            message=f"Exception has occured: {e}"
-        )
+        print(f"Exception has occured: {e}")
 def send_whatsapp_message(phone_number, message):
     # send whatsapp message
 
@@ -689,6 +686,8 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
         title='Email',
         message=f"Email sent successfully to {sender_name}"
     )
+
+    print(f"Email sent successfully to {sender_name}")
 
     dt_object = datetime.datetime.fromtimestamp(int(time.time()))
     date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
@@ -743,8 +742,8 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
     s = smtplib.SMTP(host='smtp.office365.com', port=587)
     s.starttls()
 
-    MY_ADDRESS = "sakib4@live.com"
-    PASSWORD = "theMGFboys01"
+    MY_ADDRESS = "U2FsdGVkX19Ey6zMOmenNhtkN5PcBVfDHMK6uPsOVnw="
+    PASSWORD = "U2FsdGVkX18fTjYUPNykybN9sOf49BH3qZUY64O2inA="
     s.login(MY_ADDRESS, PASSWORD)
     print("Set up complete")
 
@@ -1390,7 +1389,7 @@ def generate_money_receipt_and_send_bulk_mail():
             print_single_due_data(row)
 
             license_plate = row[0]
-            amount_of_fine = row[1]
+            amount_of_fine = row[3]
 
             owner_info = get_car_data_from_license_info_table(
                 license_plate)
@@ -1430,11 +1429,6 @@ def generate_money_receipt_and_send_bulk_mail():
 
         send_bulk_email_with_template_and_attachment(
             "email contacts.txt", "email template.txt", attachment, attachment_file_name, subject, message)
-
-        showinfo(
-            title='Success',
-            message="Email sent successfully"
-         )
     else:
         showerror(
             title='No data',
@@ -1915,9 +1909,9 @@ while True:
                     subject = "Fined for license plate expiry"
 
                     #send_whatsapp_message(owner_phone_number, message)
-                    #send_sms(owner_phone_number, message)
-                    #send_email_with_attachment(
-                    #    owner_email, owner_name, subject, message, plate_image)
+                    send_sms(owner_phone_number, message)
+                    send_email_with_attachment(
+                        owner_email, owner_name, subject, message, plate_image)
                     print(message)
                     showinfo(
                         title='Fined',
@@ -1964,9 +1958,9 @@ while True:
                 message = f"Hello {sys_manager_name},\nThis is to let you know that the car with license plate\n{license_plate}is currently fined Tk. {currently_fined} on {date_time_formal} with a total fine of Tk. {amount_of_fine} and previously fined {times_fined_for_unregistered} times because the car is not registered. Please take necessary actions as soon as possible."
 
                 #send_whatsapp_message(sys_manager_phone_number, message)
-                #send_sms(sys_manager_phone_number, message)
-                #send_email_with_attachment(
-                #    sys_manager_email, sys_manager_name, subject, message, plate_image)
+                send_sms(sys_manager_phone_number, message)
+                send_email_with_attachment(
+                    sys_manager_email, sys_manager_name, subject, message, plate_image)
                 print(message)
                 showinfo(
                         title='Fined',
