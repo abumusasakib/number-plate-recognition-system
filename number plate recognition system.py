@@ -702,13 +702,8 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
         envelope.add_attachment(attachment_file)
 
     # Send the envelope using an ad-hoc connection...
-<<<<<<< HEAD
-    envelope.send('smtp.office365.com', login='U2FsdGVkX181W1K/dY6s/I7Bn57Wdyw167yTZSuPsx4=',
-                  password='U2FsdGVkX1+6UcYkbl5/yNzRUVSFVTEYoNwSnz6TM1E=', tls=True)
-=======
     envelope.send('smtp.office365.com', login='sakib4@live.com',
                 password='theMGFboys01', tls=True)
->>>>>>> parent of f62e22f (Minor changes)
 
     showinfo(
         title='Email',
