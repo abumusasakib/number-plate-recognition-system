@@ -1,7 +1,7 @@
 # plate recognition modules
 import imutils
 import pytesseract
-# import easyocr
+#import easyocr
 import numpy as np
 import cv2  # opencv-contrib-python
 
@@ -14,6 +14,7 @@ import time
 
 # database modules
 import mysql.connector  # mysql-connector-python
+from mysql.connector import Error
 
 import os
 
@@ -32,10 +33,9 @@ from tkinter.messagebox import askquestion
 from prettytable import PrettyTable
 
 
-cap = cv2.VideoCapture(1)  # camera capture
+cap = cv2.VideoCapture(1) #camera capture
 
-
-# number plate data
+#number plate data
 epoch_time = int(time.time())
 
 now = datetime.datetime.now()
@@ -44,7 +44,7 @@ date_time = str(now)
 license_plate = ''
 plate_image = ''
 
-# email related data
+#email related data
 attachment_file = ''
 query_result = ''
 
@@ -56,8 +56,6 @@ sys_manager_email = "1810617@iub.edu.bd"
 
 
 # table create functions
-
-
 def create_plate_table():
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -86,7 +84,6 @@ def create_plate_table():
             connection.close()
             print("MySQL connection is closed")
             time.sleep(3)
-
 
 def create_license_info_table():
     try:
@@ -119,7 +116,6 @@ def create_license_info_table():
             connection.close()
             print("MySQL connection is closed")
             time.sleep(3)
-
 
 def create_dues_table():
     try:
@@ -160,7 +156,6 @@ def convertToBinaryData(filename):
         binaryData = file.read()
     return binaryData
 
-
 def insert_data_into_plate_table(epoch_time, date, license_plate, plate_image):
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -190,7 +185,6 @@ def insert_data_into_plate_table(epoch_time, date, license_plate, plate_image):
             cursor.close()
             connection.close()
             print("MySQL connection is closed")
-
 
 def insert_data_into_license_info_table(license_plate, date_of_expiry, owner_name, owner_phone_number, owner_email, owner_nid_card_number, owner_nid_card_image):
     try:
@@ -223,7 +217,6 @@ def insert_data_into_license_info_table(license_plate, date_of_expiry, owner_nam
             cursor.close()
             connection.close()
             print("MySQL connection is closed")
-
 
 def insert_data_into_dues_table(license_plate, epoch_time, last_fined_date, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered):
     try:
@@ -263,7 +256,6 @@ def print_plate_data(records):
         print("Date  = ", row[1])
         print("License Plate  = ", row[2], "\n")
 
-
 def print_license_info_data(records):
     print("\nPrinting each row")
     for row in records:
@@ -274,10 +266,8 @@ def print_license_info_data(records):
         print("Owner Email  = ", row[4])
         print("Owner NID card number = ", row[5], "\n")
 
-
 def print_single_due_data(record):
-    lines = "License Plate  = " + record[0] + "\n" + "Epoch Time  = " + str(record[1]) + "\n" + "Last fined Date  = " + str(record[2]) + "\n" + "Amount of fine  = " + str(
-        record[3]) + "\n" + "Number of times fined for license expiry  =  " + str(record[4]) + "\n" + "Number of times fined for not registering license  = " + str(record[5]) + "\n"
+    lines = "License Plate  = " + record[0] + "\n" +  "Epoch Time  = " + str(record[1]) + "\n" + "Last fined Date  = " + str(record[2]) + "\n" + "Amount of fine  = " + str(record[3]) + "\n" + "Number of times fined for license expiry  =  " + str(record[4]) + "\n" + "Number of times fined for not registering license  = " + str(record[5]) + "\n"
     print(lines)
     return lines
 
@@ -306,7 +296,6 @@ def get_all_data_from_plate_table():
             print("MySQL connection is closed")
     return records
 
-
 def get_all_data_from_license_info_table():
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -329,7 +318,6 @@ def get_all_data_from_license_info_table():
             connection.close()
             print("MySQL connection is closed")
     return records
-
 
 def get_all_data_from_dues_table():
     try:
@@ -360,7 +348,6 @@ def write_file(data, filename):
     # Convert binary data to proper format and write it on Hard Disk
     with open(filename, 'wb') as file:
         file.write(data)
-
 
 def get_car_data_from_license_info_table(license_plate):
     print("Reading data from License info table")
@@ -409,7 +396,6 @@ def get_car_data_from_license_info_table(license_plate):
             print("MySQL connection is closed")
     return record
 
-
 def get_license_info_data_by_nid_card_number(nid_card_number):
     print("Reading data from License info table")
 
@@ -456,7 +442,6 @@ def get_license_info_data_by_nid_card_number(nid_card_number):
             print("MySQL connection is closed")
     return record
 
-
 def get_due_data_from_dues_table(license_plate):
     print("Reading data from Dues table")
 
@@ -482,7 +467,6 @@ def get_due_data_from_dues_table(license_plate):
             print("MySQL connection is closed")
     return record
 
-
 def get_due_data_by_epoch_time(epoch_time):
     print("Reading data from Dues table")
 
@@ -507,7 +491,6 @@ def get_due_data_by_epoch_time(epoch_time):
             connection.close()
             print("MySQL connection is closed")
     return record
-
 
 def get_plate_data_by_epoch_time(epoch_time):
     print("Reading data from Plate table")
@@ -565,7 +548,7 @@ def modify_dues_table_data(license_plate, epoch_time, last_fined_date, amount_of
 
         # Update single record now
         sql_update_query = """Update dues set epoch_time = %s, last_fined_date = %s, amount_of_fine = %s, times_fined_for_expiry = %s, times_fined_for_unregistered = %s where license_plate = %s"""
-        cursor.execute(sql_update_query, (epoch_time, last_fined_date, amount_of_fine, times_fined_for_expiry,
+        cursor.execute(sql_update_query, (epoch_time, last_fined_date,amount_of_fine, times_fined_for_expiry,
                        times_fined_for_unregistered, license_plate,))
         connection.commit()
         print("Record Updated successfully ")
@@ -619,6 +602,7 @@ def delete_dues_table_data(license_plate):
             print("MySQL connection is closed")
 
 
+
 # send message functions
 def send_sms(phone_number, message):
     # send sms
@@ -660,19 +644,17 @@ def send_sms(phone_number, message):
 
             file = open("sent_sms_log.txt", 'a', encoding='utf-8')
             file.write("Sent message at: "+date_time_formal+"\n" +
-                       "Phone Number is:"+phone_number+"\n" +
-                       "Message:"+message+"\n")
+                        "Phone Number is:"+phone_number+"\n" +
+                        "Message:"+message+"\n")
             file.close()
         else:
             print("Oops! Something wrong. Error has occured with error code: ",
-                  result["ErrorCode"], "and description", result["ErrorDescription"])
+                result["ErrorCode"], "and description", result["ErrorDescription"])
     except Exception as e:
         showerror(
             title='Error',
             message=f"Exception has occured: {e}"
         )
-
-
 def send_whatsapp_message(phone_number, message):
     # send whatsapp message
 
@@ -686,7 +668,6 @@ def send_whatsapp_message(phone_number, message):
         pg.press("tab")
     pg.press("enter")
 
-
 def send_email_with_attachment(email_address, sender_name, subject, message_text, attachment_file):
     from envelopes import Envelope, GMailSMTP
 
@@ -699,7 +680,7 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
     )
     if attachment_file != '':
         envelope.add_attachment(attachment_file)
-
+    
     # Send the envelope using an ad-hoc connection...
     envelope.send('smtp.office365.com', login='sakib4@live.com',
                 password='theMGFboys01', tls=True)
@@ -714,13 +695,12 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
 
     file = open("sent_email_log.txt", 'a', encoding='utf-8')
     file.write("Sent email at: "+date_time_formal+"\n" +
-               "Name of sender is:"+sender_name+"\n" +
-               "Email address is:"+email_address+"\n" +
-               "Subject is:"+subject+"\n" +
-               "Message: \n"+message_text+"\n" +
-               "Attached file: "+attachment_file+"\n")
+                "Name of sender is:"+sender_name+"\n" +
+                "Email address is:"+email_address+"\n" +
+                "Subject is:"+subject+"\n" +
+                "Message: \n"+message_text+"\n" +
+                "Attached file: "+attachment_file+"\n" )
     file.close()
-
 
 def send_bulk_email_with_template_and_attachment(contacts_file, starting_template_file, attachment_file, attachment_file_name, subject, message_content):
     # email modules
@@ -817,7 +797,7 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
             print("Email has been sent to " + name)
 
             del msg
-
+    
     showinfo(
         title='Success',
         message="Emails have been successfully sent"
@@ -906,8 +886,7 @@ def recognise_numberplate(img, frame_name, plate_name):
 
         #font = cv2.FONT_HERSHEY_SIMPLEX
         #res = cv2.putText(img, text=license_plate, org=(approx[0][0][0], approx[1][0][1]+60), fontFace=font, fontScale=1, color=(0,255,0), thickness=2, lineType=cv2.LINE_AA)
-        res = cv2.rectangle(img, tuple(approx[0][0]), tuple(
-            approx[2][0]), (0, 255, 0), 3)
+        res = cv2.rectangle(img, tuple(approx[0][0]), tuple(approx[2][0]), (0, 255, 0), 3)
         cv2.imshow("Result", res)
         return text
 
@@ -988,7 +967,6 @@ def camera_recognize():
     global root
     root.destroy()
 
-
 def image_recognize():
     global img
     filetypes = (
@@ -1012,7 +990,6 @@ def image_recognize():
     else:
         close()
 
-
 def list_data():
     new_root = tk.Tk()
     # config the root window
@@ -1021,8 +998,7 @@ def list_data():
     new_root.title('Show data from database')
 
     # label
-    label = ttk.Label(
-        new_root, text="Please select a database to show all data:")
+    label = ttk.Label(new_root,text="Please select a database to show all data:")
     label.pack(fill=tk.X, padx=5, pady=5)
 
     # create a combobox
@@ -1093,7 +1069,7 @@ def list_data():
                     title='Error',
                     message="No data in table"
                 )
-
+            
         elif selected == "license_info":
             print("Getting license info data from database")
             records = get_all_data_from_license_info_table()
@@ -1128,9 +1104,7 @@ def list_data():
         if found == True:
             table_starting = "<html>\n<head>\n<title>Database Records</title>\n<style>\ntr > * + * {\n\tpadding-left: 4em;\n}\ntable, th, td {\n\tborder: 1px solid black;\n\tborder-collapse: collapse;\n}\n</style>\n</head>\n<body>\n"
 
-            report = table_starting + \
-                f"<h1>{heading}</h1><br>\n" + f"<h2>{date}</h2>\n" + \
-                table.get_html_string() + "\n</body>\n</html>"
+            report = table_starting + f"<h1>{heading}</h1><br>\n" + f"<h2>{date}</h2>\n" + table.get_html_string() + "\n</body>\n</html>"
 
             file = open("records.html", 'w', encoding='utf-8')
             file.write(report)
@@ -1154,7 +1128,6 @@ def list_data():
     quit_button.pack(expand=True)
     new_root.mainloop()
 
-
 def find_data():
     new_root = tk.Tk()
 
@@ -1164,14 +1137,13 @@ def find_data():
     new_root.title('Search for data in database')
 
     # label
-    label = ttk.Label(new_root, text="Please select an option to search data:")
+    label = ttk.Label(new_root,text="Please select an option to search data:")
     label.pack(fill=tk.X, padx=5, pady=5)
 
     # create a combobox
     selected_query_option = tk.StringVar()
     option_cb = ttk.Combobox(new_root, textvariable=selected_query_option)
-    option_cb['values'] = (
-        'plate by epoch_time', 'license_info by nid_card_number', 'dues by epoch_time')
+    option_cb['values'] = ('plate by epoch_time', 'license_info by nid_card_number', 'dues by epoch_time')
 
     # prevent typing a value
     option_cb['state'] = 'readonly'
@@ -1180,7 +1152,7 @@ def find_data():
     option_cb.pack(fill=tk.X, padx=5, pady=5)
 
     # label
-    label = ttk.Label(new_root, text="Enter query: ")
+    label = ttk.Label(new_root,text="Enter query: ")
     label.pack(fill=tk.X, padx=5, pady=5)
 
     query_field = ttk.Entry(new_root)
@@ -1207,12 +1179,12 @@ def find_data():
                     date_time = results[0][1]
                     license_plate = results[0][2]
                     plate_image = f"Plate_data\Plate {epoch_time}.png"
-
+                    
                     attachment_file = plate_image
 
                     output = read_text_file(
                         f"Plate_data\Plate {epoch_time}.txt")
-
+                    
                     query_result = output
 
                     output = output + \
@@ -1304,16 +1276,16 @@ def find_data():
         if query_result != '':
             global sys_manager_name, sys_manager_email
             subject = "Query Result"
-
+            
             message = f"Hello {sys_manager_name},\nThis is to let you know the results of the query given below:\n{query_result}."
 
             send_email_with_attachment(
                 sys_manager_email, sys_manager_name, subject, message, attachment_file)
         else:
             showerror(
-                title='Error',
-                message="No query has been made"
-            )
+                    title='Error',
+                    message="No query has been made"
+                )
 
     def convert_date_time():
         # create a GUI window
@@ -1328,7 +1300,7 @@ def find_data():
         # create a Date label
         date = ttk.Label(
             new_root, text="Please enter a Date (as dd-mm-yyyy hh:mm:ss AM/PM)", justify=tk.LEFT, padding=10)
-
+        
         date.grid(row=0, column=0)
 
         date_field = ttk.Entry(new_root)
@@ -1338,7 +1310,7 @@ def find_data():
         # create a Date label
         result = ttk.Label(
             new_root, text="The epoch time is: ", justify=tk.LEFT, padding=10)
-
+        
         result.grid(row=2, column=0)
 
         result_field = ttk.Entry(new_root)
@@ -1350,13 +1322,13 @@ def find_data():
 
             try:
                 dt_object = datetime.datetime.strptime(
-                    date, "%d-%m-%Y %I:%M:%S %p")
+                        date, "%d-%m-%Y %I:%M:%S %p") 
                 result = int(time.mktime(dt_object.timetuple()))
             except ValueError:
-                result_field.delete(0, "end")
+                result_field.delete(0,"end")
                 result_field.insert(0, "<Format is incorrect>")
             else:
-                result_field.delete(0, "end")
+                result_field.delete(0,"end")
                 result_field.insert(0, result)
 
         convert = ttk.Button(new_root, text="Convert", command=convert)
@@ -1397,7 +1369,6 @@ def find_data():
     quit_button.pack(expand=True)
 
     new_root.mainloop()
-
 
 def generate_money_receipt_and_send_bulk_mail():
     print("Getting due data from database")
@@ -1440,8 +1411,7 @@ def generate_money_receipt_and_send_bulk_mail():
 
         table_starting = "<html>\n<head>\n<title>Money Receipt</title>\n<style>\ntr > * + * {\n\tpadding-left: 4em;\n}\ntable, th, td {\n\tborder: 1px solid black;\n\tborder-collapse: collapse;\n}\n</style>\n</head>\n<body>\n"
 
-        receipt = table_starting + f"<h1>{heading}</h1><br>\n" + f"<h2>{date}</h2>\n" + table.get_html_string(
-        ) + f"\n<h3>Total amount due is Tk. {total}</h3>\n" + "\n</body>\n</html>"
+        receipt = table_starting + f"<h1>{heading}</h1><br>\n" + f"<h2>{date}</h2>\n" + table.get_html_string() + f"\n<h3>Total amount due is Tk. {total}</h3>\n" + "\n</body>\n</html>"
 
         file_name = "receipt"
 
@@ -1464,14 +1434,13 @@ def generate_money_receipt_and_send_bulk_mail():
         showinfo(
             title='Success',
             message="Email sent successfully"
-        )
+         )
     else:
         showerror(
             title='No data',
             message="No data in table"
         )
         time.sleep(3)
-
 
 def run_sftp_server():
     showinfo(
@@ -1480,13 +1449,11 @@ def run_sftp_server():
     )
     os.system("RebexTinySftpServer-Binaries-Latest\\RebexTinySftpServer.exe")
 
-
 def show_help():
     global img
     img = cv2.imread("help image.jpg")
     global root
     root.destroy()
-
 
 def close():
     global root
@@ -1555,8 +1522,7 @@ root.mainloop()
 while True:
     if camera == True:
         success, img = cap.read()
-    else:
-        img = cv2.imread(opened_img)
+
     if closed == True:
         print("Closing...")
         cv2.destroyAllWindows()
@@ -1635,7 +1601,7 @@ while True:
     # press 'd' to write the detected number plate to database
     if keyboard.is_pressed("d"):
         # database operations
-        # create_plate_table()
+        #create_plate_table()
 
         if license_plate != '':
             insert_data_into_plate_table(epoch_time, date_time, license_plate,
@@ -1678,7 +1644,7 @@ while True:
                 due_amount = due_record[0][3]
                 paid_due = askquestion(
                     "Query about dues", f"Has the owner paid his due of Tk.{due_amount}?")
-
+            
             if(len(register_record) != 0):
                 showerror(
                     title='Cannot register',
@@ -1688,6 +1654,7 @@ while True:
             else:
                 if paid_due == "":
                     paid_due = "yes"
+
 
             if(paid_due == "yes" and registered == False):
                 showinfo(
@@ -1797,10 +1764,10 @@ while True:
 
                     try:
                         expiry_dt_obj = datetime.datetime.strptime(
-                            date_of_expiry, "%d-%m-%Y %I:%M:%S %p")
+                        date_of_expiry, "%d-%m-%Y %I:%M:%S %p")
 
                         expiry_dt_timestamp = expiry_dt_obj.strftime(
-                            "%Y-%m-%d %H:%M:%S")
+                        "%Y-%m-%d %H:%M:%S")
                     except:
                         showerror(
                             title='Error',
@@ -1918,7 +1885,7 @@ while True:
                         title='Expiry',
                         message=f"License plate is expired by {diffMonths} months and {diffDays} days"
                     )
-
+                    
                     date_time_formal = expiry_dt_obj.strftime(
                         "%A, %d %B %Y at %I:%M %p")
 
@@ -1966,14 +1933,14 @@ while True:
                         # for expiry increase fine by 5k for each successive offense and for 5th month and above keep 25k
 
                     print("Currently fined Tk.", fined)
-
+                    
                     message = f"Hello {owner_name},\nYour car's license plate of\n{license_plate}expiry was on {date_time_formal} and it has been expired for {diffMonths} months and {diffDays} days. You have also been currently fined Tk. {fined} with a total fine of Tk. {amount_of_fine} and in total fined {times_fined_for_expiry} times. Please renew your license plate and pay the fine as soon as possible."
 
                     subject = "Fined for license plate expiry"
 
                     #send_whatsapp_message(owner_phone_number, message)
                     #send_sms(owner_phone_number, message)
-                    # send_email_with_attachment(
+                    #send_email_with_attachment(
                     #    owner_email, owner_name, subject, message, plate_image)
                     print(message)
                     showinfo(
@@ -1988,8 +1955,8 @@ while True:
                     )
             else:
                 showinfo(
-                    title='Status',
-                    message="License Plate is not Registered"
+                        title='Status',
+                        message="License Plate is not Registered"
                 )
 
                 record = get_due_data_from_dues_table(license_plate)
@@ -2022,13 +1989,13 @@ while True:
 
                 #send_whatsapp_message(sys_manager_phone_number, message)
                 #send_sms(sys_manager_phone_number, message)
-                # send_email_with_attachment(
+                #send_email_with_attachment(
                 #    sys_manager_email, sys_manager_name, subject, message, plate_image)
                 print(message)
                 showinfo(
-                    title='Fined',
-                    message=f"Currently fined Tk. {currently_fined}\nTotal fine Tk. {amount_of_fine}\nTotal Fined {times_fined_for_unregistered} times."
-                )
+                        title='Fined',
+                        message=f"Currently fined Tk. {currently_fined}\nTotal fine Tk. {amount_of_fine}\nTotal Fined {times_fined_for_unregistered} times."
+                    )
 
         else:
             showerror(
@@ -2056,7 +2023,7 @@ while True:
 
     # press 'm' to generate money receipt of all dues and send bulk email
     if keyboard.is_pressed("m"):
-        generate_money_receipt_and_send_bulk_mail()
+        generate_money_receipt_and_send_mail()
 
     # press 'g' to run sftp server
     if keyboard.is_pressed("g"):
@@ -2066,7 +2033,5 @@ while True:
     if keyboard.is_pressed("q"):
         print("Closing...")
         flush_input()
-        cap.release()
-        cv2.destroyWindow("Output")
         break
 cv2.destroyAllWindows()
