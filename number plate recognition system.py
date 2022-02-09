@@ -54,7 +54,6 @@ sys_manager_email = "1810617@iub.edu.bd"
 
 # database functions
 
-opened_img = ''
 
 # table create functions
 
@@ -991,9 +990,7 @@ def camera_recognize():
 
 
 def image_recognize():
-    global camera, closed, opened_img
-    camera = False
-    closed = False
+    global img
     filetypes = (
         ('JPG files', '*.jpg *.jpeg'),
         ('BMP files', '*.bmp'),
@@ -1002,14 +999,14 @@ def image_recognize():
     )
 
     flush_input()
-    opened_img = fd.askopenfilename(
+    filename = fd.askopenfilename(
         title='Select an image file for number plate recognition',
         initialdir='/sample/test/',
         filetypes=filetypes
     )
 
-    if opened_img != '':
-        img = cv2.imread(opened_img)
+    if filename != '':
+        img = cv2.imread(filename)
         global root
         root.destroy()
     else:
