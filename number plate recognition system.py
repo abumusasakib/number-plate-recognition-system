@@ -1382,13 +1382,14 @@ def generate_money_receipt_and_send_bulk_mail():
         date = f"Date: {date_time_formal}"
 
         table = PrettyTable(
-            ['License Plate', 'Owner Name', 'Owner NID', 'Amount of Fine'])
+            ['License Plate', 'Owner Name', 'Owner NID', 'Last fined Date', 'Amount of Fine'])
         total = 0
 
         for row in records:
             print_single_due_data(row)
 
             license_plate = row[0]
+            last_fined_date = row[2]
             amount_of_fine = row[3]
 
             owner_info = get_car_data_from_license_info_table(
@@ -1404,9 +1405,9 @@ def generate_money_receipt_and_send_bulk_mail():
             total += amount_of_fine
 
             table.add_row([license_plate, owner_name,
-                           owner_nid, amount_of_fine])
+                           owner_nid, last_fined_date, amount_of_fine])
 
-        table.add_row(['TOTAL', '--', '--', f"Tk. {total}"])
+        table.add_row(['TOTAL', '--', '--', '--', f"Tk. {total}"])
 
         table_starting = "<html>\n<head>\n<title>Money Receipt</title>\n<style>\ntr > * + * {\n\tpadding-left: 4em;\n}\ntable, th, td {\n\tborder: 1px solid black;\n\tborder-collapse: collapse;\n}\n</style>\n</head>\n<body>\n"
 
@@ -1993,7 +1994,7 @@ while True:
 
     # press 'm' to generate money receipt of all dues and send bulk email
     if keyboard.is_pressed("m"):
-        generate_money_receipt_and_send_mail()
+        generate_money_receipt_and_send_bulk_mail()
 
     # press 'g' to run sftp server
     if keyboard.is_pressed("g"):
