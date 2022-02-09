@@ -16,7 +16,7 @@ Streets and parkways are one of the main methods of transport and there should b
 10. **keyboard**
 11. **tkinter** (for GUI)
 12. **prettytable** (for report and receipt generate)
-13. **requests**, **json** (for accessing SMSQ's SMS API)
+13. **requests** (for accessing SMSQ's SMS API)
 14. **pywhatkit**, **pyautogui** (for optional WhatsApp message sending)
 15. **envelopes** (for single mail)
 16. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
