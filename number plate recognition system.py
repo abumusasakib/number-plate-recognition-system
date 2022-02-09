@@ -1552,30 +1552,6 @@ while True:
             message=shortcuts
         )
 
-    # press 'i' to recognize number plate from image
-    if keyboard.is_pressed("i"):
-        cv2.destroyAllWindows()
-
-        filetypes = (
-            ('JPG files', '*.jpg *.jpeg'),
-            ('BMP files', '*.bmp'),
-            ('PNG files', '*.png'),
-            ('Other image files', '*.*')
-        )
-
-        filename = fd.askopenfilename(
-            title='Select an image file for number plate recognition',
-            initialdir='/sample/test/',
-            filetypes=filetypes
-        )
-
-        img = cv2.imread(filename)
-
-    # press 'v' to open camera for number plate recognition
-    if keyboard.is_pressed("v"):
-        cv2.destroyAllWindows()
-        camera = True
-
     # press 't' to write the detected number plate to text file
     if keyboard.is_pressed("t"):
         # text file operations
