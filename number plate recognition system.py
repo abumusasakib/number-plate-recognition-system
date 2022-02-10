@@ -1031,10 +1031,10 @@ def list_data():
 
                 for row in records:
                     epoch_time = row[0]
-                    date = row[1]
+                    date_of_detection = row[1]
                     license_plate = row[2]
 
-                    table.add_row([epoch_time, date, license_plate])
+                    table.add_row([epoch_time, date_of_detection, license_plate])
             else:
                 showerror(
                     title='Error',
@@ -1550,6 +1550,7 @@ while True:
     # press 't' to write the detected number plate to text file
     if keyboard.is_pressed("t"):
         # text file operations
+        #create_license_info_table()
         if license_plate != '':
             dt_object = datetime.datetime.fromtimestamp(epoch_time)
             date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
@@ -1573,7 +1574,6 @@ while True:
     if keyboard.is_pressed("d"):
         # database operations
         #create_plate_table()
-
         if license_plate != '':
             insert_data_into_plate_table(epoch_time, date_time, license_plate,
                                          f"Detected_Plates\Plate {epoch_time}.png")
