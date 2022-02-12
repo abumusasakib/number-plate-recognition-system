@@ -17,6 +17,7 @@ import mysql.connector  # mysql-connector-python
 from mysql.connector import Error
 
 import os
+import sys
 
 # keyboard entry module
 import keyboard
@@ -25,7 +26,7 @@ import keyboard
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import askyesno, showinfo
 from tkinter.messagebox import showerror
 from tkinter.messagebox import askquestion
 
@@ -209,6 +210,10 @@ def insert_data_into_license_info_table(license_plate, date_of_expiry, owner_nam
             result = cursor.execute(mySql_insert_query, record)
             connection.commit()
             print("Record inserted successfully into License info table")
+            showinfo(
+                title='Registration Complete',
+                message='Registered successfully to the system'
+            )
 
     except mysql.connector.Error as error:
         print("Failed to insert record into License info table: {}".format(error))
@@ -649,7 +654,7 @@ def send_sms(phone_number, message):
             file.close()
         else:
             print("Oops! Something wrong. Error has occured with error code: ",
-                result["ErrorCode"], "and description", result["ErrorDescription"])
+                result["ErrorCode"], "and description:", result["ErrorDescription"])
     except Exception as e:
         print(f"Exception has occured: {e}")
 def send_whatsapp_message(phone_number, message):
@@ -877,8 +882,9 @@ def recognise_numberplate(img, frame_name, plate_name):
         #im = enhancer.enhance(2)
         #im = im.convert('1')
         # im.save(plate_image)
-        pytesseract.pytesseract.tesseract_cmd = (
-            r"C:\Program Files\Tesseract-OCR\tesseract")
+        if sys.platform == 'win32':
+            pytesseract.pytesseract.tesseract_cmd = (
+                r"C:\Program Files\Tesseract-OCR\tesseract")
 
         text = pytesseract.image_to_string(
             Image.open(plate_name), lang="ben")  # if required: config='--psm 11'
@@ -921,8 +927,9 @@ def recognise_numberplate(img, frame_name, plate_name):
 # html to pdf convert function
 def html_to_pdf(input_file_name):
     import pdfkit
-    path_wkthmltopdf = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
-    config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
+    if sys.platform == 'win32':
+        path_wkthmltopdf = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+        config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
 
     options = {
         'page-size': 'Letter',
@@ -936,8 +943,9 @@ def html_to_pdf(input_file_name):
         ],
         'no-outline': None
     }
-    pdfkit.from_file(f"{input_file_name}.html", f"{input_file_name}.pdf",
-                     configuration=config, options=options)
+    if sys.platform == 'win32':
+        pdfkit.from_file(f"{input_file_name}.html", f"{input_file_name}.pdf",
+                        configuration=config, options=options)
 
 
 # text file reading function
@@ -1193,7 +1201,6 @@ def find_data():
                         title='Record found',
                         message=output
                     )
-
                 else:
                     showerror(
                         title='Error',
@@ -1224,6 +1231,7 @@ def find_data():
                         title='Record found',
                         message=output
                     )
+
                 else:
                     showerror(
                         title='Error',
@@ -1344,6 +1352,7 @@ def find_data():
         text='Search',
         command=search
     )
+    
     send_mail_button = ttk.Button(
         new_root,
         text='Send email',
@@ -1356,7 +1365,7 @@ def find_data():
         command=convert_date_time
     )
 
-    quit_button = ttk.Button(
+    close_button = ttk.Button(
         new_root,
         text='Close',
         command=close
@@ -1365,8 +1374,8 @@ def find_data():
     search_button.pack(expand=True)
     send_mail_button.pack(expand=True)
     date_time_to_epoch_time_button.pack(expand=True)
-    quit_button.pack(expand=True)
-
+    close_button.pack(expand=True)
+    
     new_root.mainloop()
 
 def generate_money_receipt_and_send_bulk_mail():
@@ -1505,7 +1514,8 @@ image_button.pack(expand=True)
 list_data_button.pack(expand=True)
 search_data_button.pack(expand=True)
 generate_money_receipt_and_send_bulk_mail_button.pack(expand=True)
-run_sftp_server_button.pack(expand=True)
+if sys.platform == 'win32':
+    run_sftp_server_button.pack(expand=True)
 help_button.pack(expand=True)
 quit_button.pack(expand=True)
 
@@ -1573,8 +1583,7 @@ while True:
     # press 'd' to write the detected number plate to database
     if keyboard.is_pressed("d"):
         # database operations
-        create_plate_table()
-        """
+        #create_plate_table()
         if license_plate != '':
             insert_data_into_plate_table(epoch_time, date_time, license_plate,
                                          f"Detected_Plates\Plate {epoch_time}.png")
@@ -1588,7 +1597,7 @@ while True:
                 title='Error',
                 message="Nothing to write. Please recognize a number plate from camera or image"
             )
-        """
+            
     # press 'l' to show all data from database
     if keyboard.is_pressed("l"):
         list_data()
@@ -1600,7 +1609,7 @@ while True:
     # press 'r' to register the detected number plate
     if keyboard.is_pressed("r"):
         # database operations
-        # create_license_info_table()
+        #create_license_info_table()
 
         if license_plate != '':
             flush_input()
@@ -1763,10 +1772,6 @@ while True:
                             title='Error',
                             message="Format is incorrect"
                         )
-                    showinfo(
-                        title='Registration Complete',
-                        message='Registered successfully to the system'
-                    )
 
                     global due_record
 
@@ -1999,7 +2004,8 @@ while True:
 
     # press 'g' to run sftp server
     if keyboard.is_pressed("g"):
-        run_sftp_server()
+        if sys.platform == 'win32':
+            run_sftp_server()
 
     # press 'q' to exit
     if keyboard.is_pressed("q"):
