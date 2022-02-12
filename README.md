@@ -7,7 +7,7 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 
 ## Dependencies
 
-1. **pytesseract**, **Tesseract-OCR** (configure for bangla ocr)
+1. **pytesseract**, **Tesseract-OCR** (install from **<https://tesseract-ocr.github.io/tessdoc/Home.html>** and choose Bengali language)
 2. **numpy**
 3. **cv2** (install by running "pip install opencv-contrib-python")
 4. **PIL** (for image resizing and processing)
@@ -23,7 +23,7 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 14. **envelopes** (for single mail)
 15. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
 16. **msvcrt**, **sys**, **termios** (for input flushing)
-17. **pdfkit**, **wkhtmlpdf** (for converting html to pdf) (install Chocolatey and run "choco install wkhtmltopdf" to install wkhtmlpdf)
+17. **pdfkit**, **wkhtmltopdf** (for converting html to pdf) (install from **<https://wkhtmltopdf.org/downloads.html>**)
 
 * **Install all requirements by running "pip install -r requirements.txt"**
 

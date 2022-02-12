@@ -1573,7 +1573,8 @@ while True:
     # press 'd' to write the detected number plate to database
     if keyboard.is_pressed("d"):
         # database operations
-        #create_plate_table()
+        create_plate_table()
+        """
         if license_plate != '':
             insert_data_into_plate_table(epoch_time, date_time, license_plate,
                                          f"Detected_Plates\Plate {epoch_time}.png")
@@ -1587,7 +1588,7 @@ while True:
                 title='Error',
                 message="Nothing to write. Please recognize a number plate from camera or image"
             )
-
+        """
     # press 'l' to show all data from database
     if keyboard.is_pressed("l"):
         list_data()
