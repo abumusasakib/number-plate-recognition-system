@@ -17,6 +17,7 @@ import mysql.connector  # mysql-connector-python
 from mysql.connector import Error
 
 import os
+import sys
 
 # keyboard entry module
 import keyboard
@@ -209,6 +210,10 @@ def insert_data_into_license_info_table(license_plate, date_of_expiry, owner_nam
             result = cursor.execute(mySql_insert_query, record)
             connection.commit()
             print("Record inserted successfully into License info table")
+            showinfo(
+                title='Registration Complete',
+                message='Registered successfully to the system'
+            )
 
     except mysql.connector.Error as error:
         print("Failed to insert record into License info table: {}".format(error))
@@ -877,8 +882,9 @@ def recognise_numberplate(img, frame_name, plate_name):
         #im = enhancer.enhance(2)
         #im = im.convert('1')
         # im.save(plate_image)
-        pytesseract.pytesseract.tesseract_cmd = (
-            r"C:\Program Files\Tesseract-OCR\tesseract")
+        if sys.platform == 'win32':
+            pytesseract.pytesseract.tesseract_cmd = (
+                r"C:\Program Files\Tesseract-OCR\tesseract")
 
         text = pytesseract.image_to_string(
             Image.open(plate_name), lang="ben")  # if required: config='--psm 11'
@@ -921,8 +927,9 @@ def recognise_numberplate(img, frame_name, plate_name):
 # html to pdf convert function
 def html_to_pdf(input_file_name):
     import pdfkit
-    path_wkthmltopdf = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
-    config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
+    if sys.platform == 'win32':
+        path_wkthmltopdf = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+        config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
 
     options = {
         'page-size': 'Letter',
@@ -936,8 +943,9 @@ def html_to_pdf(input_file_name):
         ],
         'no-outline': None
     }
-    pdfkit.from_file(f"{input_file_name}.html", f"{input_file_name}.pdf",
-                     configuration=config, options=options)
+    if sys.platform == 'win32':
+        pdfkit.from_file(f"{input_file_name}.html", f"{input_file_name}.pdf",
+                        configuration=config, options=options)
 
 
 # text file reading function
@@ -1505,7 +1513,8 @@ image_button.pack(expand=True)
 list_data_button.pack(expand=True)
 search_data_button.pack(expand=True)
 generate_money_receipt_and_send_bulk_mail_button.pack(expand=True)
-run_sftp_server_button.pack(expand=True)
+if sys.platform == 'win32':
+    run_sftp_server_button.pack(expand=True)
 help_button.pack(expand=True)
 quit_button.pack(expand=True)
 
@@ -1573,8 +1582,7 @@ while True:
     # press 'd' to write the detected number plate to database
     if keyboard.is_pressed("d"):
         # database operations
-        create_plate_table()
-        """
+        #create_plate_table()
         if license_plate != '':
             insert_data_into_plate_table(epoch_time, date_time, license_plate,
                                          f"Detected_Plates\Plate {epoch_time}.png")
@@ -1588,7 +1596,7 @@ while True:
                 title='Error',
                 message="Nothing to write. Please recognize a number plate from camera or image"
             )
-        """
+            
     # press 'l' to show all data from database
     if keyboard.is_pressed("l"):
         list_data()
@@ -1600,7 +1608,7 @@ while True:
     # press 'r' to register the detected number plate
     if keyboard.is_pressed("r"):
         # database operations
-        # create_license_info_table()
+        #create_license_info_table()
 
         if license_plate != '':
             flush_input()
@@ -1763,10 +1771,6 @@ while True:
                             title='Error',
                             message="Format is incorrect"
                         )
-                    showinfo(
-                        title='Registration Complete',
-                        message='Registered successfully to the system'
-                    )
 
                     global due_record
 
