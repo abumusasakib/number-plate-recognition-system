@@ -641,7 +641,7 @@ def send_sms(phone_number, message):
 
         result = response.json()
 
-        if (result["ErrorCode"] == 0):
+        if (result["ErrorDescription"] == "Success"):
             print("SMS Successfully Sent to the API")
 
             dt_object = datetime.datetime.fromtimestamp(int(time.time()))
