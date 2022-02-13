@@ -653,8 +653,7 @@ def send_sms(phone_number, message):
                         "Message:"+message+"\n")
             file.close()
         else:
-            print("Oops! Something wrong. Error has occured with error code: ",
-                result["ErrorCode"], "and description:", result["ErrorDescription"])
+            print("Oops! Something wrong. An Error has occured while sending SMS")
     except Exception as e:
         print(f"Exception has occured: {e}")
 def send_whatsapp_message(phone_number, message):
