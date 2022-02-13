@@ -18,7 +18,7 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 8. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server on Windows)
 9. **os** (for running the sftp application "Rebex Tiny SFTP Server" on Windows)
 10. **sys** (for checking platform)
-11. **keyboard** (for inputs) (in order to run, python3 must be run as sudo)
+11. **keyboard** (for inputs) (in order to run on Linux, python3 must be run as sudo by using **sudo su**)
 12. **tkinter** (for GUI)
 13. **prettytable** (for report and receipt generate)
 14. **requests**, **json** (for accessing SMSQ's SMS API)

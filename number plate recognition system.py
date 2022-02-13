@@ -434,11 +434,7 @@ def get_license_info_data_by_nid_card_number(nid_card_number):
             )
 
             print("Storing NID card image on disk \n")
-            if sys.platform == 'win32':
-                write_file(owner_nid_card_image,
-                        f"License_Info_data\ID card {row[5]}.jpg")
-            elif sys.platform == 'linux':
-                write_file(owner_nid_card_image,
+            write_file(owner_nid_card_image,
                         f"License_Info_data/ID card {row[5]}.jpg")
 
     except mysql.connector.Error as error:
