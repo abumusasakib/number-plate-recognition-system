@@ -1529,8 +1529,8 @@ while True:
 
     # press 's' to take still image from camera and recognise number plate
     if cv2.waitKey(1) & keyboard.is_pressed("s"):
-        frame_image = f"Frames\Frame {epoch_time}.png"
-        plate_image = f"Detected_Plates\Plate {epoch_time}.png"
+        frame_image = f"Frames/Frame {epoch_time}.png"
+        plate_image = f"Detected_Plates/Plate {epoch_time}.png"
 
         license_plate = recognise_numberplate(img, frame_image, plate_image)
 
