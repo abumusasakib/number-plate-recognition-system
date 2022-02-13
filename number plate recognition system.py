@@ -50,8 +50,8 @@ attachment_file = ''
 query_result = ''
 
 sys_manager_name = "System Manager"
-sys_manager_phone_number = "U2FsdGVkX1/R6VSNmAcr2JF+VV/h13H1M3Y2viCRGPE="
-sys_manager_email = "U2FsdGVkX194cTLJUZIBBgZWATQbbwYLzEoZ7kLQm56ekmgBp808Umsoh4jmuKfq"
+sys_manager_phone_number = 8801621554760
+sys_manager_email = "1810617@iub.edu.bd"
 
 # database functions
 
@@ -617,15 +617,15 @@ def send_sms(phone_number, message):
     url = "https://api.smsq.global/api/v2/SendSMS"
 
     querystring = {
-        "SenderId": "U2FsdGVkX1/sNVLkZ7alPXVfo7bWg06REGw2OzhMKbE=",
+        "SenderId": "8804445649826",
         "Is_Unicode": True,
         "Is_Flash": False,
         "SchedTime": "",
         "GroupId": "",
         "Message": message,
         "MobileNumbers": phone_number,
-        "ApiKey": "U2FsdGVkX1+i095rqKcZeQFyvaBUcJq9zBo4asfNR7DJ828nZfGrdlPMmawrmSU4hLS+G2qvDUE8ig+hV+IATw==",
-        "ClientId": "U2FsdGVkX1/857tok/i2JIfniCKC4GovzXof0OFoVDlgNE0r5eT5tbKHL6VLzgnLldy8rD5z/fU+2/9iiexYqg=="
+        "ApiKey": "WDoKYJPIUu/5jVnfTwR1tTb5z46ZQ3fsYzqlCkg6mTI=",
+        "ClientId": "24502137-4ea0-4be2-8db8-02e087f84118"
     }
 
     headers = {
@@ -807,19 +807,6 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
         message="Emails have been successfully sent"
     )
 
-
-# clear input function
-def flush_input():
-    try:
-        import msvcrt
-        while msvcrt.kbhit():
-            msvcrt.getch()
-    except ImportError:
-        import sys
-        import termios  # for linux/unix
-        termios.tcflush(sys.stdin, termios.TCIOFLUSH)
-
-
 # numberplate recognition function
 def recognise_numberplate(img, frame_name, plate_name):
     #img = imutils.resize(img, width=500)
@@ -983,7 +970,6 @@ def image_recognize():
         ('Other image files', '*.*')
     )
 
-    flush_input()
     filename = fd.askopenfilename(
         title='Select an image file for number plate recognition',
         initialdir='/sample/test/',
@@ -1531,7 +1517,6 @@ while True:
     if closed == True:
         print("Closing...")
         cv2.destroyAllWindows()
-        flush_input()
         break
     else:
         cv2.imshow("Output", img)
@@ -1612,8 +1597,6 @@ while True:
         #create_license_info_table()
 
         if license_plate != '':
-            flush_input()
-
             paid_due = ""
             registered = False
             due_record = get_due_data_from_dues_table(license_plate)
@@ -1696,7 +1679,6 @@ while True:
                         ('Other image files', '*.*')
                     )
 
-                    flush_input()
                     owner_nid_card_image = fd.askopenfilename(
                         title='Choose an image of the NID card of owner',
                         initialdir='/',
@@ -2010,6 +1992,5 @@ while True:
     # press 'q' to exit
     if keyboard.is_pressed("q"):
         print("Closing...")
-        flush_input()
         break
 cv2.destroyAllWindows()
