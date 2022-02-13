@@ -371,9 +371,8 @@ def get_car_data_from_license_info_table(license_plate):
 
         for row in record:
             owner_nid_card_image = row[6]
-
             file = open(
-                f"License_Info_data\Info {row[5]}.txt", 'w', encoding='utf-8')
+                    f"License_Info_data/Info {row[5]}.txt", 'w', encoding='utf-8')
             expiry_dt_obj = datetime.datetime.strptime(
                 str(row[1]), "%Y-%m-%d %H:%M:%S")
             date_time_formal = expiry_dt_obj.strftime(
@@ -389,7 +388,7 @@ def get_car_data_from_license_info_table(license_plate):
 
             print("Storing NID card image on disk \n")
             write_file(owner_nid_card_image,
-                       f"License_Info_data\ID card {row[5]}.jpg")
+                        f"License_Info_data/ID card {row[5]}.jpg")
 
     except mysql.connector.Error as error:
         print("Failed to read data from MySQL table {}".format(error))
@@ -419,7 +418,8 @@ def get_license_info_data_by_nid_card_number(nid_card_number):
             owner_nid_card_image = row[6]
 
             file = open(
-                f"License_Info_data\Info {row[5]}.txt", 'w', encoding='utf-8')
+                    f"License_Info_data/Info {row[5]}.txt", 'w', encoding='utf-8')
+            
             expiry_dt_obj = datetime.datetime.strptime(
                 str(row[1]), "%Y-%m-%d %H:%M:%S")
             date_time_formal = expiry_dt_obj.strftime(
@@ -434,8 +434,12 @@ def get_license_info_data_by_nid_card_number(nid_card_number):
             )
 
             print("Storing NID card image on disk \n")
-            write_file(owner_nid_card_image,
-                       f"License_Info_data\ID card {row[5]}.jpg")
+            if sys.platform == 'win32':
+                write_file(owner_nid_card_image,
+                        f"License_Info_data\ID card {row[5]}.jpg")
+            elif sys.platform == 'linux':
+                write_file(owner_nid_card_image,
+                        f"License_Info_data/ID card {row[5]}.jpg")
 
     except mysql.connector.Error as error:
         print("Failed to read data from MySQL table {}".format(error))
@@ -515,14 +519,14 @@ def get_plate_data_by_epoch_time(epoch_time):
             image = row[3]
 
             file = open(
-                f"Plate_data\Plate {row[0]}.txt", 'w', encoding='utf-8')
+                    f"Plate_data/Plate {row[0]}.txt", 'w', encoding='utf-8')
             dt_object = datetime.datetime.fromtimestamp(row[0])
             date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
             file.write("Timestamp: "+date_time_formal+"\n" +
                        "Number Plate is: \n"+row[2]+"\n")
 
             print("Storing plate image on disk \n")
-            write_file(image, f"Plate_data\Plate {row[0]}.png")
+            write_file(image, f"Plate_data/Plate {row[0]}.png")
 
     except mysql.connector.Error as error:
         print("Failed to read data from MySQL table {}".format(error))
@@ -747,8 +751,8 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
     s = smtplib.SMTP(host='smtp.office365.com', port=587)
     s.starttls()
 
-    MY_ADDRESS = "U2FsdGVkX19Ey6zMOmenNhtkN5PcBVfDHMK6uPsOVnw="
-    PASSWORD = "U2FsdGVkX18fTjYUPNykybN9sOf49BH3qZUY64O2inA="
+    MY_ADDRESS = "sakib4@live.com"
+    PASSWORD = "theMGFboys01"
     s.login(MY_ADDRESS, PASSWORD)
     print("Set up complete")
 
@@ -841,12 +845,13 @@ def recognise_numberplate(img, frame_name, plate_name):
     mask = np.zeros(gray.shape, np.uint8)
     try:
         new_image = cv2.drawContours(mask, [NumberPlateCount], 0, 255, -1)
+        new_image = cv2.bitwise_and(img, img, mask=mask)
     except:
         showerror(
             title='Error',
             message="Cannot draw contours"
         )
-    new_image = cv2.bitwise_and(img, img, mask=mask)
+    
 
     if NumberPlateCount is None:
         showerror(
@@ -933,6 +938,9 @@ def html_to_pdf(input_file_name):
     if sys.platform == 'win32':
         pdfkit.from_file(f"{input_file_name}.html", f"{input_file_name}.pdf",
                         configuration=config, options=options)
+    elif sys.platform == 'linux':
+        pdfkit.from_file(f"{input_file_name}.html", f"{input_file_name}.pdf",
+                        options=options)
 
 
 # text file reading function
