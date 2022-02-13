@@ -13,19 +13,22 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 4. **PIL** (for image resizing and processing)
 5. **datetime**, **time**
 6. **mysql.connector** (for database connection) (install by running "pip install mysql-connector-python")
-7. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server)
-8. **os** (for running the sftp application "Rebex Tiny SFTP Server")
-9. **keyboard**
-10. **tkinter** (for GUI)
-11. **prettytable** (for report and receipt generate)
-12. **requests**, **json** (for accessing SMSQ's SMS API)
-13. **pywhatkit**, **pyautogui** (for optional WhatsApp message sending)
-14. **envelopes** (for single mail)
-15. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
-16. **msvcrt**, **sys**, **termios** (for input flushing)
-17. **pdfkit**, **wkhtmltopdf** (for converting html to pdf) (install from **<https://wkhtmltopdf.org/downloads.html>**)
+7. **XAMPP** (for running the mysql server) (install from **<https://www.apachefriends.org/download.html>**) (for linux follow the instructions from **<https://www.apachefriends.org/faq_linux.html>**)
+(for linux start server with **sudo /opt/lampp/lampp start** and stop with **sudo /opt/lampp/lampp stop**)
+8. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server)
+9. **os** (for running the sftp application "Rebex Tiny SFTP Server")
+10. **keyboard**
+11. **tkinter** (for GUI)
+12. **prettytable** (for report and receipt generate)
+13. **requests**, **json** (for accessing SMSQ's SMS API)
+14. **pywhatkit**, **pyautogui** (for optional WhatsApp message sending)
+15. **envelopes** (for single mail)
+16. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
+17. **msvcrt**, **sys**, **termios** (for input flushing)
+18. **pdfkit**, **wkhtmltopdf** (for converting html to pdf) (install from **<https://wkhtmltopdf.org/downloads.html>**)
 
-* **Install all requirements by running "pip install -r requirements.txt"**
+* **For Windows, install all requirements by running "pip install -r requirements.txt"**
+* **For Linux, run *sudo su* and install requirements one by one and follow instructions at <https://iotdesignpro.com/projects/real-time-license-plate-recognition-using-raspberry-pi-and-python> in order to install pytesseract and opencv (use pip3 for installation)**
 
 ## How to Run
 
