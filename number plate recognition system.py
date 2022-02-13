@@ -956,7 +956,7 @@ closed = False
 root = tk.Tk()
 root.title('Number Plate Recognition System')
 root.resizable(False, False)
-root.geometry('360x250')
+root.geometry('360x300')
 
 
 def camera_recognize():
@@ -1292,7 +1292,9 @@ def find_data():
         new_root.title("Convert date time")
 
         # set the configuration of GUI window
-        new_root.geometry("400x200")
+        new_root.geometry("450x200")
+
+        new_root.resizable(False, False)
 
         # create a Date label
         date = ttk.Label(
