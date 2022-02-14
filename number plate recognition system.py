@@ -36,6 +36,8 @@ from prettytable import PrettyTable
 
 cap = cv2.VideoCapture(1) #camera capture
 
+selected_query = ''
+
 #number plate data
 epoch_time = int(time.time())
 
@@ -641,19 +643,16 @@ def send_sms(phone_number, message):
 
         result = response.json()
 
-        if (result["ErrorDescription"] == "Success"):
-            print("SMS Successfully Sent to the API")
+        print("SMS Successfully Sent to the API")
 
-            dt_object = datetime.datetime.fromtimestamp(int(time.time()))
-            date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
+        dt_object = datetime.datetime.fromtimestamp(int(time.time()))
+        date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
 
-            file = open("sent_sms_log.txt", 'a', encoding='utf-8')
-            file.write("Sent message at: "+date_time_formal+"\n" +
-                        "Phone Number is:"+str(phone_number)+"\n" +
-                        "Message:"+message+"\n")
-            file.close()
-        else:
-            print("Oops! Something wrong. An Error has occured while sending SMS")
+        file = open("sent_sms_log.txt", 'a', encoding='utf-8')
+        file.write("Sent message at: "+date_time_formal+"\n" +
+                    "Phone Number is:"+str(phone_number)+"\n" +
+                    "Message:"+message+"\n")
+        file.close()
     except Exception as e:
         print(f"Exception has occured: {e}")
 def send_whatsapp_message(phone_number, message):
@@ -1156,6 +1155,7 @@ def find_data():
     query_field.pack(ipadx=120)
 
     def search():
+        global selected_query
         selected_query = option_cb.get()
         query = query_field.get()
 
@@ -1638,7 +1638,9 @@ while True:
                 root.title("Registration form")
 
                 # set the configuration of GUI window
-                root.geometry("600x400")
+                root.geometry("650x400")
+
+                root.resizable(False, False)
 
                 # create a Owner Name label
                 owner_name = ttk.Label(
