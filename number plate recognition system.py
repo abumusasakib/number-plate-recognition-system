@@ -1638,7 +1638,7 @@ while True:
                 root.title("Registration form")
 
                 # set the configuration of GUI window
-                root.geometry("700x400")
+                root.geometry("750x400")
 
                 root.resizable(False, False)
 
