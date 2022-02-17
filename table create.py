@@ -1,9 +1,9 @@
 import mysql.connector  # mysql-connector-python
 
 # date and time modules
-import datetime
 import time
 
+# table create functions
 def create_plate_table():
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -50,7 +50,8 @@ def create_license_info_table():
                                             owner_email VARCHAR(250) NOT NULL ,
                                             owner_nid_card_number VARCHAR(10) NOT NULL ,
                                             owner_nid_card_image BLOB NOT NULL ,
-                                            CONSTRAINT LicenseInfo_PK PRIMARY KEY (license_plate))
+                                            CONSTRAINT LicenseInfo_PK PRIMARY KEY (license_plate),
+                                            CONSTRAINT LicenseInfo_FK FOREIGN KEY (license_plate) REFERENCES plate(license_plate))
                                             ENGINE = InnoDB; """
             cursor = connection.cursor()
 
@@ -81,7 +82,8 @@ def create_dues_table():
                                             amount_of_fine INT(10) NOT NULL ,
                                             times_fined_for_expiry INT(10) NOT NULL ,
                                             times_fined_for_unregistered INT(10) NOT NULL ,
-                                            CONSTRAINT Dues_PK PRIMARY KEY (license_plate,last_fined_date))
+                                            CONSTRAINT Dues_PK PRIMARY KEY (license_plate,last_fined_date),
+                                            CONSTRAINT Dues_FK FOREIGN KEY (license_plate) REFERENCES plate(license_plate))
                                             ENGINE = InnoDB; """
             cursor = connection.cursor()
 

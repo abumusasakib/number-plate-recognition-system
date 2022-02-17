@@ -105,7 +105,8 @@ def create_license_info_table():
                                             owner_email VARCHAR(250) NOT NULL ,
                                             owner_nid_card_number VARCHAR(10) NOT NULL ,
                                             owner_nid_card_image BLOB NOT NULL ,
-                                            CONSTRAINT LicenseInfo_PK PRIMARY KEY (license_plate))
+                                            CONSTRAINT LicenseInfo_PK PRIMARY KEY (license_plate),
+                                            CONSTRAINT LicenseInfo_FK FOREIGN KEY (license_plate) REFERENCES plate(license_plate))
                                             ENGINE = InnoDB; """
             cursor = connection.cursor()
 
@@ -136,7 +137,8 @@ def create_dues_table():
                                             amount_of_fine INT(10) NOT NULL ,
                                             times_fined_for_expiry INT(10) NOT NULL ,
                                             times_fined_for_unregistered INT(10) NOT NULL ,
-                                            CONSTRAINT Dues_PK PRIMARY KEY (license_plate,last_fined_date))
+                                            CONSTRAINT Dues_PK PRIMARY KEY (license_plate,last_fined_date),
+                                            CONSTRAINT Dues_FK FOREIGN KEY (license_plate) REFERENCES plate(license_plate))
                                             ENGINE = InnoDB; """
             cursor = connection.cursor()
 
@@ -180,6 +182,10 @@ def insert_data_into_plate_table(epoch_time, date, license_plate, plate_image):
             result = cursor.execute(mySql_insert_query, record)
             connection.commit()
             print("Record inserted successfully into Plate table")
+            showinfo(
+                title='Success',
+                message="Successfully written to database"
+            )
 
     except mysql.connector.Error as error:
         print("Failed to insert record into Plate table: {}".format(error))
@@ -1551,6 +1557,7 @@ while True:
     if keyboard.is_pressed("t"):
         # text file operations
         #create_license_info_table()
+        
         if license_plate != '':
             dt_object = datetime.datetime.fromtimestamp(epoch_time)
             date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
@@ -1578,10 +1585,6 @@ while True:
             insert_data_into_plate_table(epoch_time, date_time, license_plate,
                                          f"Detected_Plates\Plate {epoch_time}.png")
             print_plate_data(get_all_data_from_plate_table())
-            showinfo(
-                title='Success',
-                message="Successfully written to database"
-            )
         else:
             showerror(
                 title='Error',
@@ -1590,6 +1593,7 @@ while True:
             
     # press 'l' to show all data from database
     if keyboard.is_pressed("l"):
+        #create_dues_table()
         list_data()
 
     # press 'f' to find data from database and save to hard disk
