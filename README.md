@@ -27,13 +27,13 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 17. **email**, **smtplib**, **ssl**, **Template** (for bulk email)
 18. **pdfkit**, **wkhtmltopdf** (for converting html to pdf) (install from **<https://wkhtmltopdf.org/downloads.html>**)
 
-* **For Windows, install all requirements by running "pip install -r requirements.txt"**
+* **For Windows, install all requirements by running "pip install -r requirements.txt" in a virtual environment or install them one by one**
 * **For Linux, run *sudo su* and install requirements one by one and follow instructions at <https://iotdesignpro.com/projects/real-time-license-plate-recognition-using-raspberry-pi-and-python> in order to install pytesseract and opencv (use pip3 for installation)**
 
 ## How to Run
 
 1. Install Python and the dependencies
-2. Run "number plate recognition system.py"
+2. Run "nprs.py"
 
 ## File and Folder Structure
 
