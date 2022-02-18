@@ -33,8 +33,8 @@ from tkinter.messagebox import askquestion
 # receipt and report generate module
 from prettytable import PrettyTable
 
+import io
 
-cap = cv2.VideoCapture(1) #camera capture
 
 selected_query = ''
 
@@ -55,6 +55,15 @@ sys_manager_name = "System Manager"
 sys_manager_phone_number = 8801621554760
 sys_manager_email = "1810617@iub.edu.bd"
 
+def is_raspberrypi():
+    try:
+        with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
+            if 'raspberry pi' in m.read().lower(): return True
+    except Exception: pass
+    return False
+
+if(not(is_raspberrypi())):
+    cap = cv2.VideoCapture(1) #camera capture
 # database functions
 
 
@@ -952,13 +961,6 @@ def read_text_file(file):
     file.close()
     return lines
 
-
-def is_raspberrypi():
-    try:
-        with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
-            if 'raspberry pi' in m.read().lower(): return True
-    except Exception: pass
-    return False
 
 camera = False
 closed = False
