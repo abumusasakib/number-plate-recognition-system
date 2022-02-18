@@ -953,6 +953,13 @@ def read_text_file(file):
     return lines
 
 
+def is_raspberrypi():
+    try:
+        with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
+            if 'raspberry pi' in m.read().lower(): return True
+    except Exception: pass
+    return False
+
 camera = False
 closed = False
 
@@ -1523,7 +1530,19 @@ root.mainloop()
 
 while True:
     if camera == True:
-        success, img = cap.read()
+        if(is_raspberrypi()):
+            from picamera.array import PiRGBArray
+            from picamera import PiCamera
+
+            camera = PiCamera()
+            camera.resolution = (640, 480)
+            camera.framerate = 30
+            rawCapture = PiRGBArray(camera, size=(640, 480))
+            for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+                    img = frame.array
+                    rawCapture.truncate(0)
+        else:
+            success, img = cap.read()
 
     if closed == True:
         print("Closing...")
