@@ -1530,20 +1530,21 @@ root.protocol("WM_DELETE_WINDOW", close)
 # run the app
 root.mainloop()
 
+if(is_raspberrypi() and camera == True):
+    from picamera.array import PiRGBArray
+    from picamera import PiCamera
+
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 30
+    rawCapture = PiRGBArray(camera, size=(640, 480))
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+            img = frame.array
+            rawCapture.truncate(0)
+
 while True:
     if camera == True:
-        if(is_raspberrypi()):
-            from picamera.array import PiRGBArray
-            from picamera import PiCamera
-
-            camera = PiCamera()
-            camera.resolution = (640, 480)
-            camera.framerate = 30
-            rawCapture = PiRGBArray(camera, size=(640, 480))
-            for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-                    img = frame.array
-                    rawCapture.truncate(0)
-        else:
+        if(not(is_raspberrypi())):
             success, img = cap.read()
 
     if closed == True:
