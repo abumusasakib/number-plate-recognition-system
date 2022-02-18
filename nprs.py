@@ -962,7 +962,7 @@ def read_text_file(file):
     return lines
 
 
-camera = False
+camera_opened = False
 closed = False
 
 # create the root window
@@ -973,8 +973,8 @@ root.geometry('420x300')
 
 
 def camera_recognize():
-    global camera
-    camera = True
+    global camera_opened
+    camera_opened = True
     global root
     root.destroy()
 
@@ -1530,7 +1530,450 @@ root.protocol("WM_DELETE_WINDOW", close)
 # run the app
 root.mainloop()
 
-if(is_raspberrypi() and camera == True):
+def detect_number_plate():
+    frame_image = f"Frames/Frame {epoch_time}.png"
+    plate_image = f"Detected_Plates/Plate {epoch_time}.png"
+
+    license_plate = recognise_numberplate(img, frame_image, plate_image)
+
+    if license_plate != '':
+        showinfo(
+            title='Number Plate',
+            message=f"Detected Number Plate is:\n {license_plate}"
+        )
+
+def keyboard_shortcuts():
+    shortcuts = read_text_file("keyboard shortcuts.txt")
+    showinfo(
+        title='Keyboard Shortcuts',
+        message=shortcuts
+    )
+
+def write_to_text_file():
+    # text file operations
+    #create_license_info_table()
+    
+    if license_plate != '':
+        dt_object = datetime.datetime.fromtimestamp(epoch_time)
+        date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
+
+        file = open("numberPlates.txt", 'a', encoding='utf-8')
+        file.write("Detected: "+date_time_formal+"\n" +
+                "Number Plate is: \n"+license_plate+"\n")
+        file.close()
+        showinfo(
+            title='Text file',
+            message="Written to text file successfully"
+        )
+
+    else:
+        showerror(
+            title='Error',
+            message="Nothing to write. Please recognize nameplate or search from plate table"
+        )
+
+def write_to_database():
+    # database operations
+    #create_plate_table()
+    if license_plate != '':
+        insert_data_into_plate_table(epoch_time, date_time, license_plate,
+                                    f"Detected_Plates\Plate {epoch_time}.png")
+        print_plate_data(get_all_data_from_plate_table())
+    else:
+        showerror(
+            title='Error',
+            message="Nothing to write. Please recognize a number plate from camera or image"
+        )
+
+def register():
+    # database operations
+    #create_license_info_table()
+
+    if license_plate != '':
+        paid_due = ""
+        registered = False
+        due_record = get_due_data_from_dues_table(license_plate)
+
+        register_record = get_car_data_from_license_info_table(
+            license_plate)
+
+        if(len(due_record) != 0):
+            due_amount = due_record[0][3]
+            paid_due = askquestion(
+                "Query about dues", f"Has the owner paid his due of Tk.{due_amount}?")
+        
+        if(len(register_record) != 0):
+            showerror(
+                title='Cannot register',
+                message='Sorry, cannot be registered into the system. Already registered'
+            )
+            registered = True
+        else:
+            if paid_due == "":
+                paid_due = "yes"
+
+
+        if(paid_due == "yes" and registered == False):
+            showinfo(
+                title='Registration',
+                message='Please enter the requested information on the registration form'
+            )
+
+            # create a GUI window
+            root = tk.Tk()
+
+            # set the title of GUI window
+            root.title("Registration form")
+
+            # set the configuration of GUI window
+            root.geometry("750x400")
+
+            root.resizable(False, False)
+
+            # create a Owner Name label
+            owner_name = ttk.Label(
+                root, text="Owner Name", justify=tk.LEFT, padding=10)
+
+            # create a Owner Contact No. label
+            owner_contact_no = ttk.Label(
+                root, text="Owner Contact No.\n(as 880xxxxxxxxxx)", justify=tk.LEFT, padding=10)
+
+            # create a Owner Email id label
+            owner_email_id = ttk.Label(
+                root, text="Owner Email id", justify=tk.LEFT, padding=10)
+
+            # create a Date of License Expiry label
+            date_of_license_expiry = ttk.Label(
+                root, text="Date of License Expiry\n(as dd-mm-yyyy hh:mm:ss AM/PM)", justify=tk.LEFT, padding=10)
+
+            # create a Owner NID card No. label
+            owner_nid_card_no = ttk.Label(
+                root, text="Owner NID card No.", justify=tk.LEFT, padding=10)
+
+            # create a Owner NID card image label
+            owner_nid_card_image = ttk.Label(
+                root, text="Owner NID card image\n(both front and back)\n(image would be resized if needed)", justify=tk.LEFT, padding=10)
+
+            # grid method is used for placing
+            # the widgets at respective positions
+            # in table like structure .
+            owner_name.grid(row=1, column=0)
+            owner_contact_no.grid(row=2, column=0)
+            owner_email_id.grid(row=3, column=0)
+            date_of_license_expiry.grid(row=4, column=0)
+            owner_nid_card_no.grid(row=5, column=0)
+            owner_nid_card_image.grid(row=6, column=0)
+
+            nid_card_image_file = ''
+
+            def choose_image():
+                filetypes = (
+                    ('JPG files', '*.jpg *.jpeg'),
+                    ('BMP files', '*.bmp'),
+                    ('PNG files', '*.png'),
+                    ('Other image files', '*.*')
+                )
+
+                owner_nid_card_image = fd.askopenfilename(
+                    title='Choose an image of the NID card of owner',
+                    initialdir='/',
+                    filetypes=filetypes
+                )
+
+                #file_stat = os.stat(C)
+                #file_size = file_stat.st_size
+
+                if owner_nid_card_image != '':
+                    img = Image.open(owner_nid_card_image)
+                    width, height = img.size
+
+                    if (width > 600) or (height > 600):
+                        img.thumbnail((600, 600))
+                        img.save('nid_image_resized.jpg')
+                        owner_nid_card_image = 'nid_image_resized.jpg'
+                    showinfo(
+                        title='Success',
+                        message=f"Image has been selected"
+                    )
+
+                """
+                while file_size > 204800:
+                    showerror(
+                        title='File size too big',
+                        message='File size is greater than 200 KB or resolution greater than 1500x1500'
+                    )
+                    flush_input()
+                    owner_nid_card_image = fd.askopenfilename(
+                        title='Choose an image of the NID card of owner',
+                        initialdir='/',
+                        filetypes=filetypes
+                    )
+                    file_stat = os.stat(owner_nid_card_image)
+                    file_size = file_stat.st_size
+
+                    img = Image.open(owner_nid_card_image)
+                    width, height = img.size
+                """
+                global nid_card_image_file
+                nid_card_image_file = owner_nid_card_image
+
+            def insert():
+                date_of_expiry = date_of_license_expiry_field.get()
+
+                try:
+                    expiry_dt_obj = datetime.datetime.strptime(
+                    date_of_expiry, "%d-%m-%Y %I:%M:%S %p")
+
+                    expiry_dt_timestamp = expiry_dt_obj.strftime(
+                    "%Y-%m-%d %H:%M:%S")
+                except:
+                    showerror(
+                        title='Error',
+                        message="Date time format is incorrect"
+                    )
+
+                global license_plate
+                owner_name = owner_name_field.get()
+                owner_phone_num = owner_contact_no_field.get()
+                owner_email = owner_email_id_field.get()
+                owner_nid_card_num = owner_nid_card_no_field.get()
+
+                global nid_card_image_file
+                owner_nid_card_image = nid_card_image_file
+
+                try:
+                    insert_data_into_license_info_table(
+                        license_plate, expiry_dt_timestamp, owner_name, owner_phone_num, owner_email, owner_nid_card_num, owner_nid_card_image)
+                except:
+                    showerror(
+                        title='Error',
+                        message="Format is incorrect"
+                    )
+
+                global due_record
+
+                if(len(due_record) != 0):
+                    delete_dues_table_data(license_plate)
+
+                records = get_all_data_from_license_info_table()
+                if(len(records) != 0):
+                    print_license_info_data(records)
+                else:
+                    showerror(
+                        title='Error',
+                        message="Nothing to write"
+                    )
+
+                global root
+                root.destroy()
+
+            # create a text entry box
+            # for typing the information
+            owner_name_field = ttk.Entry(root)
+            owner_contact_no_field = ttk.Entry(root)
+            owner_email_id_field = ttk.Entry(root)
+            date_of_license_expiry_field = ttk.Entry(root)
+            owner_nid_card_no_field = ttk.Entry(root)
+
+            owner_nid_card_image_button = ttk.Button(
+                root, text="Select file", command=choose_image)
+
+            # grid method is used for placing
+            # the widgets at respective positions
+            # in table like structure .
+            owner_name_field.grid(row=1, column=1, ipadx="70")
+            owner_contact_no_field.grid(row=2, column=1, ipadx="70")
+            owner_email_id_field.grid(row=3, column=1, ipadx="70")
+            date_of_license_expiry_field.grid(row=4, column=1, ipadx="70")
+            owner_nid_card_no_field.grid(row=5, column=1, ipadx="70")
+            owner_nid_card_image_button.grid(row=6, column=1)
+
+            submit = ttk.Button(root, text="Submit", command=insert)
+            submit.grid(row=8, column=2)
+
+            # start the GUI
+            root.mainloop()
+        elif paid_due == "no":
+            showerror(
+                title='Cannot register',
+                message='Sorry, cannot be registered into the system. Dues needed to be cleared'
+            )
+    else:
+        showinfo(
+            title='No data',
+            message='Nothing to register'
+        )
+
+def check_if_registered_or_expired():
+    if license_plate != '':
+        record = get_car_data_from_license_info_table(license_plate)
+
+        current_epoch_time = int(time.time())
+        dt_object = datetime.datetime.fromtimestamp(current_epoch_time)
+
+        date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
+        timestamp = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+
+        if len(record) != 0:
+            showinfo(
+                title='Status',
+                message="License plate is Registered"
+            )
+
+            owner_name = record[0][2]
+            owner_phone_number = record[0][3]
+            owner_email = record[0][4]
+
+            dt_object = datetime.datetime.fromtimestamp(epoch_time)
+            expiry_dt_obj = datetime.datetime.strptime(
+                str(record[0][1]), "%Y-%m-%d %H:%M:%S")
+
+            diff = dt_object - expiry_dt_obj
+            diffMonths = diff.days // 30
+            diffDays = diff.days % 30
+
+            expiry_dt = int(expiry_dt_obj.timestamp())
+            if epoch_time > expiry_dt:
+                showinfo(
+                    title='Expiry',
+                    message=f"License plate is expired by {diffMonths} months and {diffDays} days"
+                )
+                
+                date_time_formal = expiry_dt_obj.strftime(
+                    "%A, %d %B %Y at %I:%M %p")
+
+                record = get_due_data_from_dues_table(license_plate)
+
+                fine_amount = 5000
+                fine_factor = 0
+
+                if(diffMonths >= 0 and diffMonths <= 1):
+                    fine_factor = 1
+                if(diffMonths > 1 and diffMonths <= 2):
+                    fine_factor = 2
+                elif(diffMonths > 2 and diffMonths <= 3):
+                    fine_factor = 3
+                elif(diffMonths > 3 and diffMonths <= 4):
+                    fine_factor = 4
+                elif(diffMonths > 4 and diffMonths <= 5):
+                    fine_factor = 5
+                elif(diffMonths >= 5):
+                    fine_factor = 5
+
+                if(len(record) == 0):
+                    # create_dues_table()
+
+                    times_fined_for_expiry = 1
+                    times_fined_for_unregistered = 0
+
+                    fined = fine_amount * fine_factor
+                    amount_of_fine = fined
+
+                    insert_data_into_dues_table(
+                        license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
+
+                else:
+                    times_fined_for_expiry = record[0][2] + 1
+                    times_fined_for_unregistered = 0
+
+                    fined = fine_amount * fine_factor
+                    amount_of_fine = record[0][1] + fined
+
+                    modify_dues_table_data(
+                        license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
+
+                    # 1 month eh 5k fine, 2 month 10k, 3 month 15k, 4 month 20k 5 month 25k
+                    # for expiry increase fine by 5k for each successive offense and for 5th month and above keep 25k
+
+                print("Currently fined Tk.", fined)
+                
+                message = f"Hello {owner_name},\nYour car's license plate of\n{license_plate}expiry was on {date_time_formal} and it has been expired for {diffMonths} months and {diffDays} days. You have also been currently fined Tk. {fined} with a total fine of Tk. {amount_of_fine} and in total fined {times_fined_for_expiry} times. Please renew your license plate and pay the fine as soon as possible."
+
+                subject = "Fined for license plate expiry"
+
+                #send_whatsapp_message(owner_phone_number, message)
+                send_sms(owner_phone_number, message)
+                send_email_with_attachment(
+                    owner_email, owner_name, subject, message, plate_image)
+                print(message)
+                showinfo(
+                    title='Fined',
+                    message=f"Currently fined Tk. {fined}\nTotal fine Tk. {amount_of_fine}\nTotal Fined {times_fined_for_expiry} times."
+                )
+
+            else:
+                showinfo(
+                    title='License Valid',
+                    message="License is not expired"
+                )
+        else:
+            showinfo(
+                    title='Status',
+                    message="License Plate is not Registered"
+            )
+
+            record = get_due_data_from_dues_table(license_plate)
+            if(len(record) == 0):
+                # create_dues_table()
+                amount_of_fine = 10000
+                currently_fined = amount_of_fine
+                times_fined_for_expiry = 0
+                times_fined_for_unregistered = 1
+                insert_data_into_dues_table(
+                    license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
+            else:
+                currently_fined = 0
+                times_fined_for_expiry = 0
+                times_fined_for_unregistered = record[0][5] + 1
+                if(times_fined_for_unregistered < 5):
+                    currently_fined = 10000 * times_fined_for_unregistered
+                else:
+                    currently_fined = 50000
+
+                amount_of_fine = record[0][3] + currently_fined
+                modify_dues_table_data(
+                    license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
+
+            # for unregistered increase fine by 10k for each successive offense and for 5th offence and above keep 50k
+
+            subject = "License Plate fined for unregistered"
+
+            message = f"Hello {sys_manager_name},\nThis is to let you know that the car with license plate\n{license_plate}is currently fined Tk. {currently_fined} on {date_time_formal} with a total fine of Tk. {amount_of_fine} and previously fined {times_fined_for_unregistered} times because the car is not registered. Please take necessary actions as soon as possible."
+
+            #send_whatsapp_message(sys_manager_phone_number, message)
+            send_sms(sys_manager_phone_number, message)
+            send_email_with_attachment(
+                sys_manager_email, sys_manager_name, subject, message, plate_image)
+            print(message)
+            showinfo(
+                    title='Fined',
+                    message=f"Currently fined Tk. {currently_fined}\nTotal fine Tk. {amount_of_fine}\nTotal Fined {times_fined_for_unregistered} times."
+                )
+
+    else:
+        showerror(
+            title='No data',
+            message="Nothing to check"
+        )
+
+def send_email_of_detected_number_plate():
+    if license_plate != '' and plate_image != '':
+        dt_object = datetime.datetime.fromtimestamp(epoch_time)
+        date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
+
+        attachment_file_name = str(epoch_time)+'.png'
+        subject = "License Plate Detected"
+        message = f"a license plate\n{license_plate}was detected on {date_time_formal}."
+
+        send_bulk_email_with_template_and_attachment(
+            "email contacts.txt", "email template.txt", plate_image, attachment_file_name, subject, message)
+    else:
+        showerror(
+            title='Error',
+            message="Nothing to send"
+        )
+
+if(is_raspberrypi() and camera_opened == True):
     from picamera.array import PiRGBArray
     from picamera import PiCamera
 
@@ -1539,491 +1982,123 @@ if(is_raspberrypi() and camera == True):
     camera.framerate = 30
     rawCapture = PiRGBArray(camera, size=(640, 480))
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-            img = frame.array
-            rawCapture.truncate(0)
+        img = frame.array
+        rawCapture.truncate(0)
 
-while True:
-    if camera == True:
-        if(not(is_raspberrypi())):
-            success, img = cap.read()
-
-    if closed == True:
-        print("Closing...")
-        cv2.destroyAllWindows()
-        break
-    else:
-        cv2.imshow("Output", img)
-
-    # press 's' to take still image from camera and recognise number plate
-    if cv2.waitKey(1) & keyboard.is_pressed("s"):
-        frame_image = f"Frames/Frame {epoch_time}.png"
-        plate_image = f"Detected_Plates/Plate {epoch_time}.png"
-
-        license_plate = recognise_numberplate(img, frame_image, plate_image)
-
-        if license_plate != '':
-            showinfo(
-                title='Number Plate',
-                message=f"Detected Number Plate is:\n {license_plate}"
-            )
-
-    # press 'h' to show keyboard shortcuts
-    if keyboard.is_pressed("h"):
-        shortcuts = read_text_file("keyboard shortcuts.txt")
-        showinfo(
-            title='Keyboard Shortcuts',
-            message=shortcuts
-        )
-
-    # press 't' to write the detected number plate to text file
-    if keyboard.is_pressed("t"):
-        # text file operations
-        #create_license_info_table()
-        
-        if license_plate != '':
-            dt_object = datetime.datetime.fromtimestamp(epoch_time)
-            date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
-
-            file = open("numberPlates.txt", 'a', encoding='utf-8')
-            file.write("Detected: "+date_time_formal+"\n" +
-                       "Number Plate is: \n"+license_plate+"\n")
-            file.close()
-            showinfo(
-                title='Text file',
-                message="Written to text file successfully"
-            )
-
+        if closed == True:
+            print("Closing...")
+            cv2.destroyAllWindows()
+            break
         else:
-            showerror(
-                title='Error',
-                message="Nothing to write. Please recognize nameplate or search from plate table"
-            )
+            cv2.imshow("Output", img)
+        # press 's' to take still image from camera and recognise number plate
+        if cv2.waitKey(1) & keyboard.is_pressed("s"):
+            detect_number_plate()
 
-    # press 'd' to write the detected number plate to database
-    if keyboard.is_pressed("d"):
-        # database operations
-        #create_plate_table()
-        if license_plate != '':
-            insert_data_into_plate_table(epoch_time, date_time, license_plate,
-                                         f"Detected_Plates\Plate {epoch_time}.png")
-            print_plate_data(get_all_data_from_plate_table())
+        # press 'h' to show keyboard shortcuts
+        if keyboard.is_pressed("h"):
+            keyboard_shortcuts()
+
+        # press 't' to write the detected number plate to text file
+        if keyboard.is_pressed("t"):
+            write_to_text_file()
+
+        # press 'd' to write the detected number plate to database
+        if keyboard.is_pressed("d"):
+            write_to_database()
+                
+        # press 'l' to show all data from database
+        if keyboard.is_pressed("l"):
+            #create_dues_table()
+            list_data()
+
+        # press 'f' to find data from database and save to hard disk
+        if keyboard.is_pressed("f"):
+            find_data()
+
+        # press 'r' to register the detected number plate
+        if keyboard.is_pressed("r"):
+            register()
+        # press 'c' to check if the detected number plate is registered or expired
+        if keyboard.is_pressed("c"):
+            check_if_registered_or_expired()
+        # press 'e' to send bulk email of the detected number plate with plate image as attachment
+        if keyboard.is_pressed("e"):
+            send_email_of_detected_number_plate()
+
+        # press 'm' to generate money receipt of all dues and send bulk email
+        if keyboard.is_pressed("m"):
+            generate_money_receipt_and_send_bulk_mail()
+
+        # press 'g' to run sftp server
+        if keyboard.is_pressed("g"):
+            if sys.platform == 'win32':
+                run_sftp_server()
+
+        # press 'q' to exit
+        if keyboard.is_pressed("q"):
+            print("Closing...")
+            break
+    cv2.destroyAllWindows()
+if(not(is_raspberrypi()) and camera_opened == True):
+    while True:
+        if camera_opened == True:
+            if(not(is_raspberrypi())):
+                success, img = cap.read()
+
+        if closed == True:
+            print("Closing...")
+            cv2.destroyAllWindows()
+            break
         else:
-            showerror(
-                title='Error',
-                message="Nothing to write. Please recognize a number plate from camera or image"
-            )
-            
-    # press 'l' to show all data from database
-    if keyboard.is_pressed("l"):
-        #create_dues_table()
-        list_data()
-
-    # press 'f' to find data from database and save to hard disk
-    if keyboard.is_pressed("f"):
-        find_data()
-
-    # press 'r' to register the detected number plate
-    if keyboard.is_pressed("r"):
-        # database operations
-        #create_license_info_table()
-
-        if license_plate != '':
-            paid_due = ""
-            registered = False
-            due_record = get_due_data_from_dues_table(license_plate)
-
-            register_record = get_car_data_from_license_info_table(
-                license_plate)
-
-            if(len(due_record) != 0):
-                due_amount = due_record[0][3]
-                paid_due = askquestion(
-                    "Query about dues", f"Has the owner paid his due of Tk.{due_amount}?")
-            
-            if(len(register_record) != 0):
-                showerror(
-                    title='Cannot register',
-                    message='Sorry, cannot be registered into the system. Already registered'
-                )
-                registered = True
-            else:
-                if paid_due == "":
-                    paid_due = "yes"
-
-
-            if(paid_due == "yes" and registered == False):
-                showinfo(
-                    title='Registration',
-                    message='Please enter the requested information on the registration form'
-                )
-
-                # create a GUI window
-                root = tk.Tk()
-
-                # set the title of GUI window
-                root.title("Registration form")
-
-                # set the configuration of GUI window
-                root.geometry("750x400")
-
-                root.resizable(False, False)
-
-                # create a Owner Name label
-                owner_name = ttk.Label(
-                    root, text="Owner Name", justify=tk.LEFT, padding=10)
-
-                # create a Owner Contact No. label
-                owner_contact_no = ttk.Label(
-                    root, text="Owner Contact No.\n(as 880xxxxxxxxxx)", justify=tk.LEFT, padding=10)
-
-                # create a Owner Email id label
-                owner_email_id = ttk.Label(
-                    root, text="Owner Email id", justify=tk.LEFT, padding=10)
-
-                # create a Date of License Expiry label
-                date_of_license_expiry = ttk.Label(
-                    root, text="Date of License Expiry\n(as dd-mm-yyyy hh:mm:ss AM/PM)", justify=tk.LEFT, padding=10)
-
-                # create a Owner NID card No. label
-                owner_nid_card_no = ttk.Label(
-                    root, text="Owner NID card No.", justify=tk.LEFT, padding=10)
-
-                # create a Owner NID card image label
-                owner_nid_card_image = ttk.Label(
-                    root, text="Owner NID card image\n(both front and back)\n(image would be resized if needed)", justify=tk.LEFT, padding=10)
-
-                # grid method is used for placing
-                # the widgets at respective positions
-                # in table like structure .
-                owner_name.grid(row=1, column=0)
-                owner_contact_no.grid(row=2, column=0)
-                owner_email_id.grid(row=3, column=0)
-                date_of_license_expiry.grid(row=4, column=0)
-                owner_nid_card_no.grid(row=5, column=0)
-                owner_nid_card_image.grid(row=6, column=0)
-
-                nid_card_image_file = ''
-
-                def choose_image():
-                    filetypes = (
-                        ('JPG files', '*.jpg *.jpeg'),
-                        ('BMP files', '*.bmp'),
-                        ('PNG files', '*.png'),
-                        ('Other image files', '*.*')
-                    )
-
-                    owner_nid_card_image = fd.askopenfilename(
-                        title='Choose an image of the NID card of owner',
-                        initialdir='/',
-                        filetypes=filetypes
-                    )
-
-                    #file_stat = os.stat(C)
-                    #file_size = file_stat.st_size
-
-                    if owner_nid_card_image != '':
-                        img = Image.open(owner_nid_card_image)
-                        width, height = img.size
-
-                        if (width > 600) or (height > 600):
-                            img.thumbnail((600, 600))
-                            img.save('nid_image_resized.jpg')
-                            owner_nid_card_image = 'nid_image_resized.jpg'
-                        showinfo(
-                            title='Success',
-                            message=f"Image has been selected"
-                        )
-
-                    """
-                    while file_size > 204800:
-                        showerror(
-                            title='File size too big',
-                            message='File size is greater than 200 KB or resolution greater than 1500x1500'
-                        )
-                        flush_input()
-                        owner_nid_card_image = fd.askopenfilename(
-                            title='Choose an image of the NID card of owner',
-                            initialdir='/',
-                            filetypes=filetypes
-                        )
-                        file_stat = os.stat(owner_nid_card_image)
-                        file_size = file_stat.st_size
-
-                        img = Image.open(owner_nid_card_image)
-                        width, height = img.size
-                    """
-                    global nid_card_image_file
-                    nid_card_image_file = owner_nid_card_image
-
-                def insert():
-                    date_of_expiry = date_of_license_expiry_field.get()
-
-                    try:
-                        expiry_dt_obj = datetime.datetime.strptime(
-                        date_of_expiry, "%d-%m-%Y %I:%M:%S %p")
-
-                        expiry_dt_timestamp = expiry_dt_obj.strftime(
-                        "%Y-%m-%d %H:%M:%S")
-                    except:
-                        showerror(
-                            title='Error',
-                            message="Date time format is incorrect"
-                        )
-
-                    global license_plate
-                    owner_name = owner_name_field.get()
-                    owner_phone_num = owner_contact_no_field.get()
-                    owner_email = owner_email_id_field.get()
-                    owner_nid_card_num = owner_nid_card_no_field.get()
-
-                    global nid_card_image_file
-                    owner_nid_card_image = nid_card_image_file
-
-                    try:
-                        insert_data_into_license_info_table(
-                            license_plate, expiry_dt_timestamp, owner_name, owner_phone_num, owner_email, owner_nid_card_num, owner_nid_card_image)
-                    except:
-                        showerror(
-                            title='Error',
-                            message="Format is incorrect"
-                        )
-
-                    global due_record
-
-                    if(len(due_record) != 0):
-                        delete_dues_table_data(license_plate)
-
-                    records = get_all_data_from_license_info_table()
-                    if(len(records) != 0):
-                        print_license_info_data(records)
-                    else:
-                        showerror(
-                            title='Error',
-                            message="Nothing to write"
-                        )
-
-                    global root
-                    root.destroy()
-
-                # create a text entry box
-                # for typing the information
-                owner_name_field = ttk.Entry(root)
-                owner_contact_no_field = ttk.Entry(root)
-                owner_email_id_field = ttk.Entry(root)
-                date_of_license_expiry_field = ttk.Entry(root)
-                owner_nid_card_no_field = ttk.Entry(root)
-
-                owner_nid_card_image_button = ttk.Button(
-                    root, text="Select file", command=choose_image)
-
-                # grid method is used for placing
-                # the widgets at respective positions
-                # in table like structure .
-                owner_name_field.grid(row=1, column=1, ipadx="70")
-                owner_contact_no_field.grid(row=2, column=1, ipadx="70")
-                owner_email_id_field.grid(row=3, column=1, ipadx="70")
-                date_of_license_expiry_field.grid(row=4, column=1, ipadx="70")
-                owner_nid_card_no_field.grid(row=5, column=1, ipadx="70")
-                owner_nid_card_image_button.grid(row=6, column=1)
-
-                submit = ttk.Button(root, text="Submit", command=insert)
-                submit.grid(row=8, column=2)
-
-                # start the GUI
-                root.mainloop()
-            elif paid_due == "no":
-                showerror(
-                    title='Cannot register',
-                    message='Sorry, cannot be registered into the system. Dues needed to be cleared'
-                )
-        else:
-            showinfo(
-                title='No data',
-                message='Nothing to register'
-            )
-
-    # press 'c' to check if the detected number plate is registered or expired
-    if keyboard.is_pressed("c"):
-        if license_plate != '':
-            record = get_car_data_from_license_info_table(license_plate)
-
-            current_epoch_time = int(time.time())
-            dt_object = datetime.datetime.fromtimestamp(current_epoch_time)
-
-            date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
-            timestamp = dt_object.strftime("%Y-%m-%d %H:%M:%S")
-
-            if len(record) != 0:
-                showinfo(
-                    title='Status',
-                    message="License plate is Registered"
-                )
-
-                owner_name = record[0][2]
-                owner_phone_number = record[0][3]
-                owner_email = record[0][4]
-
-                dt_object = datetime.datetime.fromtimestamp(epoch_time)
-                expiry_dt_obj = datetime.datetime.strptime(
-                    str(record[0][1]), "%Y-%m-%d %H:%M:%S")
-
-                diff = dt_object - expiry_dt_obj
-                diffMonths = diff.days // 30
-                diffDays = diff.days % 30
-
-                expiry_dt = int(expiry_dt_obj.timestamp())
-                if epoch_time > expiry_dt:
-                    showinfo(
-                        title='Expiry',
-                        message=f"License plate is expired by {diffMonths} months and {diffDays} days"
-                    )
-                    
-                    date_time_formal = expiry_dt_obj.strftime(
-                        "%A, %d %B %Y at %I:%M %p")
-
-                    record = get_due_data_from_dues_table(license_plate)
-
-                    fine_amount = 5000
-                    fine_factor = 0
-
-                    if(diffMonths >= 0 and diffMonths <= 1):
-                        fine_factor = 1
-                    if(diffMonths > 1 and diffMonths <= 2):
-                        fine_factor = 2
-                    elif(diffMonths > 2 and diffMonths <= 3):
-                        fine_factor = 3
-                    elif(diffMonths > 3 and diffMonths <= 4):
-                        fine_factor = 4
-                    elif(diffMonths > 4 and diffMonths <= 5):
-                        fine_factor = 5
-                    elif(diffMonths >= 5):
-                        fine_factor = 5
-
-                    if(len(record) == 0):
-                        # create_dues_table()
-
-                        times_fined_for_expiry = 1
-                        times_fined_for_unregistered = 0
-
-                        fined = fine_amount * fine_factor
-                        amount_of_fine = fined
-
-                        insert_data_into_dues_table(
-                            license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
-
-                    else:
-                        times_fined_for_expiry = record[0][2] + 1
-                        times_fined_for_unregistered = 0
-
-                        fined = fine_amount * fine_factor
-                        amount_of_fine = record[0][1] + fined
-
-                        modify_dues_table_data(
-                            license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
-
-                        # 1 month eh 5k fine, 2 month 10k, 3 month 15k, 4 month 20k 5 month 25k
-                        # for expiry increase fine by 5k for each successive offense and for 5th month and above keep 25k
-
-                    print("Currently fined Tk.", fined)
-                    
-                    message = f"Hello {owner_name},\nYour car's license plate of\n{license_plate}expiry was on {date_time_formal} and it has been expired for {diffMonths} months and {diffDays} days. You have also been currently fined Tk. {fined} with a total fine of Tk. {amount_of_fine} and in total fined {times_fined_for_expiry} times. Please renew your license plate and pay the fine as soon as possible."
-
-                    subject = "Fined for license plate expiry"
-
-                    #send_whatsapp_message(owner_phone_number, message)
-                    send_sms(owner_phone_number, message)
-                    send_email_with_attachment(
-                        owner_email, owner_name, subject, message, plate_image)
-                    print(message)
-                    showinfo(
-                        title='Fined',
-                        message=f"Currently fined Tk. {fined}\nTotal fine Tk. {amount_of_fine}\nTotal Fined {times_fined_for_expiry} times."
-                    )
-
-                else:
-                    showinfo(
-                        title='License Valid',
-                        message="License is not expired"
-                    )
-            else:
-                showinfo(
-                        title='Status',
-                        message="License Plate is not Registered"
-                )
-
-                record = get_due_data_from_dues_table(license_plate)
-                if(len(record) == 0):
-                    # create_dues_table()
-                    amount_of_fine = 10000
-                    currently_fined = amount_of_fine
-                    times_fined_for_expiry = 0
-                    times_fined_for_unregistered = 1
-                    insert_data_into_dues_table(
-                        license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
-                else:
-                    currently_fined = 0
-                    times_fined_for_expiry = 0
-                    times_fined_for_unregistered = record[0][5] + 1
-                    if(times_fined_for_unregistered < 5):
-                        currently_fined = 10000 * times_fined_for_unregistered
-                    else:
-                        currently_fined = 50000
-
-                    amount_of_fine = record[0][3] + currently_fined
-                    modify_dues_table_data(
-                        license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
-
-                # for unregistered increase fine by 10k for each successive offense and for 5th offence and above keep 50k
-
-                subject = "License Plate fined for unregistered"
-
-                message = f"Hello {sys_manager_name},\nThis is to let you know that the car with license plate\n{license_plate}is currently fined Tk. {currently_fined} on {date_time_formal} with a total fine of Tk. {amount_of_fine} and previously fined {times_fined_for_unregistered} times because the car is not registered. Please take necessary actions as soon as possible."
-
-                #send_whatsapp_message(sys_manager_phone_number, message)
-                send_sms(sys_manager_phone_number, message)
-                send_email_with_attachment(
-                    sys_manager_email, sys_manager_name, subject, message, plate_image)
-                print(message)
-                showinfo(
-                        title='Fined',
-                        message=f"Currently fined Tk. {currently_fined}\nTotal fine Tk. {amount_of_fine}\nTotal Fined {times_fined_for_unregistered} times."
-                    )
-
-        else:
-            showerror(
-                title='No data',
-                message="Nothing to check"
-            )
-
-    # press 'e' to send bulk email of the detected number plate with plate image as attachment
-    if keyboard.is_pressed("e"):
-        if license_plate != '' and plate_image != '':
-            dt_object = datetime.datetime.fromtimestamp(epoch_time)
-            date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
-
-            attachment_file_name = str(epoch_time)+'.png'
-            subject = "License Plate Detected"
-            message = f"a license plate\n{license_plate}was detected on {date_time_formal}."
-
-            send_bulk_email_with_template_and_attachment(
-                "email contacts.txt", "email template.txt", plate_image, attachment_file_name, subject, message)
-        else:
-            showerror(
-                title='Error',
-                message="Nothing to send"
-            )
-
-    # press 'm' to generate money receipt of all dues and send bulk email
-    if keyboard.is_pressed("m"):
-        generate_money_receipt_and_send_bulk_mail()
-
-    # press 'g' to run sftp server
-    if keyboard.is_pressed("g"):
-        if sys.platform == 'win32':
-            run_sftp_server()
-
-    # press 'q' to exit
-    if keyboard.is_pressed("q"):
-        print("Closing...")
-        break
-cv2.destroyAllWindows()
+            cv2.imshow("Output", img)
+
+        # press 's' to take still image from camera and recognise number plate
+        if cv2.waitKey(1) & keyboard.is_pressed("s"):
+            detect_number_plate()
+
+        # press 'h' to show keyboard shortcuts
+        if keyboard.is_pressed("h"):
+            keyboard_shortcuts()
+
+        # press 't' to write the detected number plate to text file
+        if keyboard.is_pressed("t"):
+            write_to_text_file()
+
+        # press 'd' to write the detected number plate to database
+        if keyboard.is_pressed("d"):
+            write_to_database()
+                
+        # press 'l' to show all data from database
+        if keyboard.is_pressed("l"):
+            #create_dues_table()
+            list_data()
+
+        # press 'f' to find data from database and save to hard disk
+        if keyboard.is_pressed("f"):
+            find_data()
+
+        # press 'r' to register the detected number plate
+        if keyboard.is_pressed("r"):
+            register()
+        # press 'c' to check if the detected number plate is registered or expired
+        if keyboard.is_pressed("c"):
+            check_if_registered_or_expired()
+        # press 'e' to send bulk email of the detected number plate with plate image as attachment
+        if keyboard.is_pressed("e"):
+            send_email_of_detected_number_plate()
+
+        # press 'm' to generate money receipt of all dues and send bulk email
+        if keyboard.is_pressed("m"):
+            generate_money_receipt_and_send_bulk_mail()
+
+        # press 'g' to run sftp server
+        if keyboard.is_pressed("g"):
+            if sys.platform == 'win32':
+                run_sftp_server()
+
+        # press 'q' to exit
+        if keyboard.is_pressed("q"):
+            print("Closing...")
+            break
+    cv2.destroyAllWindows()
