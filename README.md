@@ -13,8 +13,12 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 4. **PIL** (for image resizing and processing)
 5. **datetime**, **time**
 6. **mysql.connector** (for database connection) (install by running "pip install mysql-connector-python")
-7. **XAMPP** (for running the mysql server) (install from **<https://www.apachefriends.org/download.html>**) (for linux follow the instructions from **<https://www.apachefriends.org/faq_linux.html>**)
-(for linux start server with **sudo /opt/lampp/lampp start** and stop with **sudo /opt/lampp/lampp stop**)
+7. **XAMPP** (for running the mysql server)
+
+    * for windows, install from **<https://www.apachefriends.org/download.html>** and set root password by following this link **<https://kinsta.com/knowledgebase/xampp-mysql-password/>**
+    * for linux follow the instructions from **<https://www.apachefriends.org/faq_linux.html>** and start server with *sudo /opt/lampp/lampp* start and stop with *sudo /opt/lampp/lampp stop*
+    * for raspberry pi follow instructions at **<https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/>**
+
 8. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server on Windows)
 9. **os** (for running the sftp application "Rebex Tiny SFTP Server" on Windows)
 10. **sys** (for checking platform)
@@ -28,7 +32,7 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 18. **pdfkit**, **wkhtmltopdf** (for converting html to pdf) (install from **<https://wkhtmltopdf.org/downloads.html>**)
 
 * **For Windows, install all requirements by running "pip install -r requirements.txt" in a virtual environment or install them one by one**
-* **For Linux, run *sudo su* and install requirements one by one and follow instructions at <https://iotdesignpro.com/projects/real-time-license-plate-recognition-using-raspberry-pi-and-python> in order to install pytesseract and opencv (use pip3 for installation)**
+* **For Linux, run *sudo su* and install requirements one by one and follow instructions at <https://iotdesignpro.com/projects/real-time-license-plate-recognition-using-raspberry-pi-and-python> and <https://stackoverflow.com/questions/63669752/building-wheel-for-opencv-python-pep-517-runs-forever> in order to install pytesseract and opencv (use pip3 for installation)**
 
 ## How to Run
 

@@ -73,7 +73,7 @@ def create_plate_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -102,7 +102,7 @@ def create_license_info_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -135,7 +135,7 @@ def create_dues_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -175,7 +175,7 @@ def insert_data_into_plate_table(epoch_time, date, license_plate, plate_image):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -209,7 +209,7 @@ def insert_data_into_license_info_table(license_plate, date_of_expiry, owner_nam
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -245,7 +245,7 @@ def insert_data_into_dues_table(license_plate, epoch_time, last_fined_date, amou
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -300,7 +300,7 @@ def get_all_data_from_plate_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             sql_select_Query = "select * from plate"
             cursor = connection.cursor()
@@ -323,7 +323,7 @@ def get_all_data_from_license_info_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             sql_select_Query = "select * from license_info"
             cursor = connection.cursor()
@@ -346,7 +346,7 @@ def get_all_data_from_dues_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             sql_select_Query = "select * from dues"
             cursor = connection.cursor()
@@ -378,7 +378,7 @@ def get_car_data_from_license_info_table(license_plate):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
         sql_select_Query = """SELECT * from license_info where license_plate = %s"""
@@ -424,7 +424,7 @@ def get_license_info_data_by_nid_card_number(nid_card_number):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
         sql_select_Query = """SELECT * from license_info where owner_nid_card_number = %s"""
@@ -471,7 +471,7 @@ def get_due_data_from_dues_table(license_plate):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
         sql_select_Query = """SELECT * from dues where license_plate = %s"""
@@ -496,7 +496,7 @@ def get_due_data_by_epoch_time(epoch_time):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
         sql_select_Query = """SELECT * from dues where epoch_time = %s"""
@@ -521,7 +521,7 @@ def get_plate_data_by_epoch_time(epoch_time):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
         sql_select_Query = """SELECT * from plate where epoch_time = %s"""
@@ -558,7 +558,7 @@ def modify_dues_table_data(license_plate, epoch_time, last_fined_date, amount_of
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
 
@@ -594,7 +594,7 @@ def delete_dues_table_data(license_plate):
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
 
         cursor = connection.cursor()
 

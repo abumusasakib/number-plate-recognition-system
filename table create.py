@@ -9,7 +9,7 @@ def create_plate_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -38,7 +38,7 @@ def create_license_info_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
@@ -71,7 +71,7 @@ def create_dues_table():
         connection = mysql.connector.connect(host='localhost',
                                              database='license_plates',
                                              user='root',
-                                             password='')
+                                             password='root')
         if connection.is_connected():
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
