@@ -1920,10 +1920,15 @@ def run_sftp_server():
     os.system("RebexTinySftpServer-Binaries-Latest\\RebexTinySftpServer.exe")
 
 def show_help():
-    global img
-    img = cv2.imread("help image.jpg")
+    global image_opened, opened_img
+    image_opened = True
+    opened_img = "help image.jpg"
+    img = cv2.imread(opened_img)
     global root
-    root.destroy()
+    try:
+        root.destroy()
+    except Exception as e:
+        pass
 
 def close():
     global root
@@ -2009,19 +2014,14 @@ if(is_raspberrypi()):
             break
         else:
             if(image_opened == True):
-                img = cv2.imread(opened_img)
-                cv2.imshow("Output", img)
+                image = cv2.imread(opened_img)
+                cv2.imshow("Output", image)
             else:
                 cv2.imshow("Output", img)
 
         # press 's' to take a still image and recognise number plate from that image
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
             detect_number_plate()
-        
-        # press 'v' to switch from recognise image file to recognise camera
-        if keyboard.is_pressed("v"):
-            cv2.destroyAllWindows()
-            camera_recognize()
         
         # press 'i' to switch from recognise camera to recognise image file
         if keyboard.is_pressed("i"):
@@ -2052,9 +2052,11 @@ if(is_raspberrypi()):
         # press 'r' to register the detected number plate
         if keyboard.is_pressed("r"):
             register()
+
         # press 'c' to check if the detected number plate is registered or expired
         if keyboard.is_pressed("c"):
             check_if_registered_or_expired()
+
         # press 'e' to send bulk email of the detected number plate with plate image as attachment
         if keyboard.is_pressed("e"):
             send_email_of_detected_number_plate()
@@ -2085,19 +2087,14 @@ else:
             break
         else:
             if(image_opened == True):
-                img = cv2.imread(opened_img)
-                cv2.imshow("Output", img)
+                image = cv2.imread(opened_img)
+                cv2.imshow("Output", image)
             else:
                 cv2.imshow("Output", img)
 
         # press 's' to take a still image and recognise number plate from that image
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
             detect_number_plate()
-        
-        # press 'v' to switch from recognise image file to recognise camera
-        if keyboard.is_pressed("v"):
-            cv2.destroyAllWindows()
-            camera_recognize()
         
         # press 'i' to switch from recognise camera to recognise image file
         if keyboard.is_pressed("i"):

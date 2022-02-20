@@ -1,6 +1,5 @@
 Keyboard shortcuts while camera or image is open:
 Press 's' to take a still image and recognise number plate from that image
-Press 'v' to switch from recognise image file to recognise camera
 Press 'i' to switch from recognise camera to recognise image file
 Press 'h' to show keyboard shortcuts
 Press 't' to write the detected number plate to text file
