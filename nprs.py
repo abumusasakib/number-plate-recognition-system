@@ -967,6 +967,8 @@ def read_text_file(file):
 
 
 camera_opened = False
+image_opened = False
+opened_img = ''
 closed = False
 
 # create the root window
@@ -998,6 +1000,9 @@ def image_recognize():
     )
 
     if filename != '':
+        global image_opened, opened_img
+        image_opened = True
+        opened_img = filename
         img = cv2.imread(filename)
         global root
         root.destroy()
@@ -1994,7 +1999,11 @@ if(is_raspberrypi()):
             cv2.destroyAllWindows()
             break
         else:
-            cv2.imshow("Output", img)
+            if(image_opened == True):
+                img = cv2.imread(opened_img)
+                cv2.imshow("Output", img)
+            else:
+                cv2.imshow("Output", img)
         # press 's' to take still image from camera and recognise number plate
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
             detect_number_plate()
@@ -2055,7 +2064,11 @@ else:
             cv2.destroyAllWindows()
             break
         else:
-            cv2.imshow("Output", img)
+            if(image_opened == True):
+                img = cv2.imread(opened_img)
+                cv2.imshow("Output", img)
+            else:
+                cv2.imshow("Output", img)
 
         # press 's' to take still image from camera and recognise number plate
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
