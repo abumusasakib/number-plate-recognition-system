@@ -1977,7 +1977,7 @@ def send_email_of_detected_number_plate():
             message="Nothing to send"
         )
 
-if(is_raspberrypi() and camera_opened == True):
+if(is_raspberrypi()):
     from picamera.array import PiRGBArray
     from picamera import PiCamera
 
@@ -2044,7 +2044,7 @@ if(is_raspberrypi() and camera_opened == True):
             print("Closing...")
             break
     cv2.destroyAllWindows()
-if(not(is_raspberrypi()) and camera_opened == True):
+else:
     while True:
         if camera_opened == True:
             if(not(is_raspberrypi())):
