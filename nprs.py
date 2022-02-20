@@ -1586,7 +1586,7 @@ def write_to_database():
     #create_plate_table()
     if license_plate != '':
         insert_data_into_plate_table(epoch_time, date_time, license_plate,
-                                    f"Detected_Plates\Plate {epoch_time}.png")
+                                    f"Detected_Plates/Plate {epoch_time}.png")
         print_plate_data(get_all_data_from_plate_table())
     else:
         showerror(
