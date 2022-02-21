@@ -1128,7 +1128,10 @@ def list_data():
             file = open("records.html", 'w', encoding='utf-8')
             file.write(report)
             file.close()
-            os.system("records.html")
+            if(is_raspberrypi()):
+                os.system("chromium-browser records.html")
+            else:
+                os.system("records.html")
 
     def close():
         new_root.destroy()
