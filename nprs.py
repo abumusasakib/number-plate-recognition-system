@@ -1129,7 +1129,8 @@ def list_data():
             file.write(report)
             file.close()
             if(is_raspberrypi()):
-                os.system("chromium-browser records.html --no-sandbox")
+                html_to_pdf("records.html")
+                os.system("qpdfview records.pdf")
             else:
                 os.system("records.html")
 
