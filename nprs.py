@@ -1129,7 +1129,7 @@ def list_data():
             file.write(report)
             file.close()
             if(is_raspberrypi()):
-                html_to_pdf("records.html")
+                html_to_pdf("records")
                 os.system("qpdfview records.pdf")
             else:
                 os.system("records.html")
