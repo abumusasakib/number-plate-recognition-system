@@ -1129,7 +1129,7 @@ def list_data():
             file.write(report)
             file.close()
             if(is_raspberrypi()):
-                os.system("chromium-browser records.html")
+                os.system("chromium-browser records.html --no-sandbox")
             else:
                 os.system("records.html")
 
