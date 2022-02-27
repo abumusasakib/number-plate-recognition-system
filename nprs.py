@@ -53,9 +53,9 @@ query_result = ''
 
 file = open("sys_manager_info.txt",'r')
 lines = file.readlines()
-sys_manager_name = lines[0]
-sys_manager_phone_number = lines[1]
-sys_manager_email = lines[2]
+sys_manager_name = lines[0].strip()
+sys_manager_phone_number = lines[1].strip()
+sys_manager_email = lines[2].strip()
 file.close()
 
 def is_raspberrypi():
