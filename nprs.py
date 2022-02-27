@@ -1205,12 +1205,12 @@ def find_data():
                     epoch_time = results[0][0]
                     date_time = results[0][1]
                     license_plate = results[0][2]
-                    plate_image = f"Plate_data\Plate {epoch_time}.png"
+                    plate_image = f"Plate_data/Plate {epoch_time}.png"
                     
                     attachment_file = plate_image
 
                     output = read_text_file(
-                        f"Plate_data\Plate {epoch_time}.txt")
+                        f"Plate_data/Plate {epoch_time}.txt")
                     
                     query_result = output
 
@@ -1274,13 +1274,13 @@ def find_data():
                     print_license_info_data(results)
 
                     output = read_text_file(
-                        f"License_Info_data\Info {results[0][5]}.txt")
+                        f"License_Info_data/Info {results[0][5]}.txt")
 
-                    attachment_file = f"License_Info_data\ID card {results[0][5]}.jpg"
+                    attachment_file = f"License_Info_data/ID card {results[0][5]}.jpg"
                     query_result = output
 
                     output = output + \
-                        f"\nNID card image is saved at:\n License_Info_data\ID card {results[0][5]}.jpg"
+                        f"\nNID card image is saved at:\n {attachment_file}"
 
                     showinfo(
                         title='Record found',
