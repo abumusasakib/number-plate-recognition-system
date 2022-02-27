@@ -1,6 +1,5 @@
 Keyboard shortcuts while camera or image is open:
 Press 's' to take a still image and recognise number plate from that image
-Press 'i' to switch from recognise camera to recognise image file
 Press 'h' to show keyboard shortcuts
 Press 't' to write the detected number plate to text file
 Press 'd' to write the detected number plate to database
@@ -10,5 +9,5 @@ Press 'r' to register the detected number plate
 Press 'c' to check if the detected number plate is registered or expired
 Press 'e' to send bulk email of the detected number plate with plate image as attachment
 Press 'm' to generate money receipt of all dues and send bulk email
-Press 'g' to run sftp server
+Press 'g' to run sftp server (for Windows)
 Press 'q' to exit
