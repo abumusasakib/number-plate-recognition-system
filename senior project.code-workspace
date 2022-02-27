@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "D:\\courses\\coding\\pythonCoding\\CSC317"
 		}
 	],
 	"settings": {},

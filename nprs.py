@@ -51,9 +51,12 @@ plate_image = ''
 attachment_file = ''
 query_result = ''
 
-sys_manager_name = "System Manager"
-sys_manager_phone_number = 8801621554760
-sys_manager_email = "1810617@iub.edu.bd"
+file = open("sys_manager_info.txt",'r')
+lines = file.readlines()
+sys_manager_name = lines[0]
+sys_manager_phone_number = lines[1]
+sys_manager_email = lines[2]
+file.close()
 
 def is_raspberrypi():
     try:
