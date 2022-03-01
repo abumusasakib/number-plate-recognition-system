@@ -67,6 +67,8 @@ def is_raspberrypi():
 
 if(not(is_raspberrypi())):
     cap = cv2.VideoCapture(1) #camera capture
+else:
+    import RPi.GPIO as GPIO
 # database functions
 
 
@@ -591,7 +593,7 @@ def modify_dues_table_data(license_plate, epoch_time, last_fined_date, amount_of
             print("MySQL connection is closed")
 
 
-# dues table delete function
+# table delete function
 def delete_dues_table_data(license_plate):
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -625,7 +627,6 @@ def delete_dues_table_data(license_plate):
         if connection.is_connected():
             connection.close()
             print("MySQL connection is closed")
-
 
 
 # send message functions
@@ -859,19 +860,26 @@ def recognise_numberplate(img, frame_name, plate_name):
         new_image = cv2.drawContours(mask, [NumberPlateCount], 0, 255, -1)
         new_image = cv2.bitwise_and(img, img, mask=mask)
     except:
+        if(is_raspberrypi()):
+            LED_PIN_BLUE = 18
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
+            GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
+            time.sleep(1)
+            GPIO.output(LED_PIN_BLUE, GPIO.LOW)
+            time.sleep(1)
+            GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
+            time.sleep(1)
+            GPIO.output(LED_PIN_BLUE, GPIO.LOW)
+            time.sleep(1)
+            GPIO.cleanup()
         showerror(
             title='Error',
             message="Cannot draw contours"
         )
     
 
-    if NumberPlateCount is None:
-        showerror(
-            title='Error',
-            message="No contour detected"
-        )
-
-    else:
+    if NumberPlateCount is not None:
         (x, y) = np.where(mask == 255)
         (x1, y1) = (np.min(x), np.min(y))
         (x2, y2) = (np.max(x), np.max(y))
@@ -1226,13 +1234,11 @@ def find_data():
                         title='Error',
                         message="Cannot find data"
                     )
-                    time.sleep(3)
             else:
                 showerror(
                     title='Error',
                     message="No data in table"
                 )
-                time.sleep(3)
 
         elif selected_query == 'dues by epoch_time':
             print("Getting due data from database")
@@ -1257,13 +1263,11 @@ def find_data():
                         title='Error',
                         message="Cannot find data"
                     )
-                    time.sleep(3)
             else:
                 showerror(
                     title='Error',
                     message="No data in table"
                 )
-                time.sleep(3)
 
         elif selected_query == 'license_info by nid_card_number':
             print("Getting license info data from database")
@@ -1291,13 +1295,11 @@ def find_data():
                         title='Error',
                         message="Cannot find data"
                     )
-                    time.sleep(3)
             else:
                 showerror(
                     title='Error',
                     message="No data in table"
                 )
-                time.sleep(3)
 
     def send_mail():
         if query_result != '':
@@ -1552,7 +1554,16 @@ def detect_number_plate():
 
     license_plate = recognise_numberplate(img, frame_image, plate_image)
 
-    if license_plate != '':
+    if license_plate is not None:
+        if(is_raspberrypi()):
+            LED_PIN_GREEN = 23
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(LED_PIN_GREEN, GPIO.OUT)
+            GPIO.output(LED_PIN_GREEN, GPIO.HIGH)
+            time.sleep(1)
+            GPIO.output(LED_PIN_GREEN, GPIO.LOW)
+            time.sleep(1)
+            GPIO.cleanup()
         showinfo(
             title='Number Plate',
             message=f"Detected Number Plate is:\n {license_plate}"
@@ -1766,8 +1777,6 @@ def register():
                         message="Format is incorrect"
                     )
 
-                global due_record
-
                 if(len(due_record) != 0):
                     delete_dues_table_data(license_plate)
 
@@ -1781,7 +1790,10 @@ def register():
                     )
 
                 global root
-                root.destroy()
+                try:
+                    root.destroy()
+                except:
+                    pass
 
             # create a text entry box
             # for typing the information
@@ -1831,6 +1843,15 @@ def check_if_registered_or_expired():
         timestamp = dt_object.strftime("%Y-%m-%d %H:%M:%S")
 
         if len(record) != 0:
+            if(is_raspberrypi()):
+                LED_PIN_GREEN = 23
+                GPIO.setmode(GPIO.BCM)
+                GPIO.setup(LED_PIN_GREEN, GPIO.OUT)
+                GPIO.output(LED_PIN_GREEN, GPIO.HIGH)
+                time.sleep(3)
+                GPIO.output(LED_PIN_GREEN, GPIO.LOW)
+                time.sleep(3)
+                GPIO.cleanup()
             showinfo(
                 title='Status',
                 message="License plate is Registered"
@@ -1850,6 +1871,15 @@ def check_if_registered_or_expired():
 
             expiry_dt = int(expiry_dt_obj.timestamp())
             if epoch_time > expiry_dt:
+                if(is_raspberrypi()):
+                    LED_PIN_BLUE = 18
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
+                    GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
+                    time.sleep(3)
+                    GPIO.output(LED_PIN_BLUE, GPIO.LOW)
+                    time.sleep(3)
+                    GPIO.cleanup()
                 showinfo(
                     title='Expiry',
                     message=f"License plate is expired by {diffMonths} months and {diffDays} days"
@@ -1858,7 +1888,7 @@ def check_if_registered_or_expired():
                 date_time_formal = expiry_dt_obj.strftime(
                     "%A, %d %B %Y at %I:%M %p")
 
-                record = get_due_data_from_dues_table(license_plate)
+                due_record = get_due_data_from_dues_table(license_plate)
 
                 fine_amount = 5000
                 fine_factor = 0
@@ -1876,7 +1906,7 @@ def check_if_registered_or_expired():
                 elif(diffMonths >= 5):
                     fine_factor = 5
 
-                if(len(record) == 0):
+                if(len(due_record) == 0):
                     # create_dues_table()
 
                     times_fined_for_expiry = 1
@@ -1889,11 +1919,11 @@ def check_if_registered_or_expired():
                         license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
 
                 else:
-                    times_fined_for_expiry = record[0][2] + 1
+                    times_fined_for_expiry = due_record[0][4] + 1
                     times_fined_for_unregistered = 0
 
                     fined = fine_amount * fine_factor
-                    amount_of_fine = record[0][1] + fined
+                    amount_of_fine = due_record[0][3] + fined
 
                     modify_dues_table_data(
                         license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
@@ -1918,11 +1948,44 @@ def check_if_registered_or_expired():
                 )
 
             else:
+                if(is_raspberrypi()):
+                    LED_PIN_GREEN = 23
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(LED_PIN_GREEN, GPIO.OUT)
+                    GPIO.output(LED_PIN_GREEN, GPIO.HIGH)
+                    time.sleep(3)
+                    
+                    servoPIN = 17
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(servoPIN, GPIO.OUT)
+
+                    p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
+                    p.start(2.5) # Initialization
+
+                    p.ChangeDutyCycle(3)
+                    time.sleep(1)
+                    p.ChangeDutyCycle(9)
+                    time.sleep(0.5)
+                    p.stop()
+
+                    GPIO.output(LED_PIN_GREEN, GPIO.LOW)
+                    time.sleep(3)
+                    
+                    GPIO.cleanup()
                 showinfo(
                     title='License Valid',
                     message="License is not expired"
                 )
         else:
+            if(is_raspberrypi()):
+                    LED_PIN_BLUE = 18
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
+                    GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
+                    time.sleep(3)
+                    GPIO.output(LED_PIN_BLUE, GPIO.LOW)
+                    time.sleep(3)
+                    GPIO.cleanup()
             showinfo(
                     title='Status',
                     message="License Plate is not Registered"
