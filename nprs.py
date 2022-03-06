@@ -1872,7 +1872,7 @@ def check_if_registered_or_expired():
             expiry_dt = int(expiry_dt_obj.timestamp())
             if epoch_time > expiry_dt:
                 if(is_raspberrypi()):
-                    LED_PIN_BLUE = 18
+                    LED_PIN_BLUE = 24
                     GPIO.setmode(GPIO.BCM)
                     GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
                     GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
@@ -1978,7 +1978,7 @@ def check_if_registered_or_expired():
                 )
         else:
             if(is_raspberrypi()):
-                    LED_PIN_BLUE = 18
+                    LED_PIN_BLUE = 24
                     GPIO.setmode(GPIO.BCM)
                     GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
                     GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
