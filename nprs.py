@@ -670,7 +670,7 @@ def send_sms(phone_number, message):
         file = open("sent_sms_log.txt", 'a', encoding='utf-8')
         file.write("Sent message at: "+date_time_formal+"\n" +
                     "Phone Number is:"+str(phone_number)+"\n" +
-                    "Message:"+message+"\n")
+                    "Message:"+message+"\n"+"\n\n")
         file.close()
     except Exception as e:
         print(f"Exception has occured: {e}")
@@ -720,7 +720,7 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
                 "Email address is:"+email_address+"\n" +
                 "Subject is:"+subject+"\n" +
                 "Message: \n"+message_text+"\n" +
-                "Attached file: "+attachment_file+"\n" )
+                "Attached file: "+attachment_file+"\n"+"\n\n")
     file.close()
 
 def send_bulk_email_with_template_and_attachment(contacts_file, starting_template_file, attachment_file, attachment_file_name, subject, message_content):
