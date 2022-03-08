@@ -1,13 +1,13 @@
 Keyboard shortcuts while camera or image is open:
-Press 's' to take a still image and recognise number plate from that image
+Press 's' to take a still image and recognise license plate from that image
 Press 'h' to show keyboard shortcuts
-Press 't' to write the detected number plate to text file
-Press 'd' to write the detected number plate to database
+Press 't' to write the detected license plate to text file
+Press 'd' to write the detected license plate to database
 Press 'l' to show all data from database
 Press 'f' to find data from database and save to hard disk
-Press 'r' to register the detected number plate
-Press 'c' to check if the detected number plate is registered or expired
-Press 'e' to send bulk email of the detected number plate with plate image as attachment
+Press 'r' to register the detected license plate
+Press 'c' to check if the detected license plate is registered or expired
+Press 'e' to send bulk email of the detected license plate with plate image as attachment
 Press 'm' to generate money receipt of all dues and send bulk email
 Press 'g' to run sftp server (for Windows)
 Press 'q' to exit

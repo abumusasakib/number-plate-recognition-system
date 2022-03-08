@@ -38,7 +38,7 @@ import io
 
 selected_query = ''
 
-#number plate data
+#license plate data
 epoch_time = int(time.time())
 
 now = datetime.datetime.now()
@@ -824,8 +824,8 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
         message="Emails have been successfully sent"
     )
 
-# numberplate recognition function
-def recognise_numberplate(img, frame_name, plate_name):
+# licenseplate recognition function
+def recognise_licenseplate(img, frame_name, plate_name):
     #img = imutils.resize(img, width=500)
     text = ''
 
@@ -841,7 +841,7 @@ def recognise_numberplate(img, frame_name, plate_name):
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]  # :30
     cv2.drawContours(img1, cnts, -1, (0, 255, 0), 3)
 
-    NumberPlateCount = None
+    LicensePlateCount = None
     img2 = img.copy()
     cv2.drawContours(img2, cnts, -1, (0, 255, 0), 3)
 
@@ -849,7 +849,7 @@ def recognise_numberplate(img, frame_name, plate_name):
         perimeter = cv2.arcLength(i, True)
         approx = cv2.approxPolyDP(i, 0.018 * perimeter, True)  # 0.2    10
         if len(approx) == 4:
-            NumberPlateCount = approx
+            LicensePlateCount = approx
             #x, y, w, h = cv2.boundingRect(i)
             #crp_img = img[y:y+h, x:x+w]
             #plate_image = f"Detected_Plates\Plate {epoch_time}.png"
@@ -857,11 +857,11 @@ def recognise_numberplate(img, frame_name, plate_name):
             break
     mask = np.zeros(gray.shape, np.uint8)
     try:
-        new_image = cv2.drawContours(mask, [NumberPlateCount], 0, 255, -1)
+        new_image = cv2.drawContours(mask, [LicensePlateCount], 0, 255, -1)
         new_image = cv2.bitwise_and(img, img, mask=mask)
     except:
         if(is_raspberrypi()):
-            LED_PIN_BLUE = 18
+            LED_PIN_BLUE = 24
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
             GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
@@ -879,7 +879,7 @@ def recognise_numberplate(img, frame_name, plate_name):
         )
     
 
-    if NumberPlateCount is not None:
+    if LicensePlateCount is not None:
         (x, y) = np.where(mask == 255)
         (x1, y1) = (np.min(x), np.min(y))
         (x2, y2) = (np.max(x), np.max(y))
@@ -912,10 +912,10 @@ def recognise_numberplate(img, frame_name, plate_name):
         return text
 
     """
-    if NumberPlateCount is None:
+    if LicensePlateCount is None:
         print("No contour detected")
     else:
-        cv2.drawContours(img, [NumberPlateCount], -1, (0, 255, 0), 3)
+        cv2.drawContours(img, [LicensePlateCount], -1, (0, 255, 0), 3)
         cv2.imshow("Frame", img)
         frame_image = f"Frames\Frame {epoch_time}.png"
         cv2.imwrite(frame_image, img)
@@ -984,7 +984,7 @@ closed = False
 
 # create the root window
 root = tk.Tk()
-root.title('Number Plate Recognition System')
+root.title('License Plate Recognition System')
 root.resizable(False, False)
 root.geometry('420x300')
 
@@ -1005,7 +1005,7 @@ def image_recognize():
     )
 
     filename = fd.askopenfilename(
-        title='Select an image file for number plate recognition',
+        title='Select an image file for license plate recognition',
         initialdir='/sample/test/',
         filetypes=filetypes
     )
@@ -1478,8 +1478,12 @@ def run_sftp_server():
     os.system("RebexTinySftpServer-Binaries-Latest\\RebexTinySftpServer.exe")
 
 def show_help():
+    global image_opened
+    image_opened = True
+    global opened_img
+    opened_img = "help image.jpg"
     global img
-    img = cv2.imread("help image.jpg")
+    img = cv2.imread(opened_img)
     global root
     root.destroy()
 
@@ -1548,11 +1552,11 @@ root.protocol("WM_DELETE_WINDOW", close)
 # run the app
 root.mainloop()
 
-def detect_number_plate():
+def detect_license_plate():
     frame_image = f"Frames/Frame {epoch_time}.png"
     plate_image = f"Detected_Plates/Plate {epoch_time}.png"
 
-    license_plate = recognise_numberplate(img, frame_image, plate_image)
+    license_plate = recognise_licenseplate(img, frame_image, plate_image)
 
     if license_plate is not None:
         if(is_raspberrypi()):
@@ -1565,8 +1569,8 @@ def detect_number_plate():
             time.sleep(1)
             GPIO.cleanup()
         showinfo(
-            title='Number Plate',
-            message=f"Detected Number Plate is:\n {license_plate}"
+            title='License Plate',
+            message=f"Detected License Plate is:\n {license_plate}"
         )
 
 def keyboard_shortcuts():
@@ -1584,9 +1588,9 @@ def write_to_text_file():
         dt_object = datetime.datetime.fromtimestamp(epoch_time)
         date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
 
-        file = open("numberPlates.txt", 'a', encoding='utf-8')
+        file = open("licensePlates.txt", 'a', encoding='utf-8')
         file.write("Detected: "+date_time_formal+"\n" +
-                "Number Plate is: \n"+license_plate+"\n")
+                "License Plate is: \n"+license_plate+"\n")
         file.close()
         showinfo(
             title='Text file',
@@ -1596,7 +1600,7 @@ def write_to_text_file():
     else:
         showerror(
             title='Error',
-            message="Nothing to write. Please recognize nameplate or search from plate table"
+            message="Nothing to write. Please recognize licenseplate or search from plate table"
         )
 
 def write_to_database():
@@ -1609,7 +1613,7 @@ def write_to_database():
     else:
         showerror(
             title='Error',
-            message="Nothing to write. Please recognize a number plate from camera or image"
+            message="Nothing to write. Please recognize a license plate from camera or image"
         )
 
 def register():
@@ -2035,7 +2039,7 @@ def check_if_registered_or_expired():
             message="Nothing to check"
         )
 
-def send_email_of_detected_number_plate():
+def send_email_of_detected_license_plate():
     if license_plate != '' and plate_image != '':
         dt_object = datetime.datetime.fromtimestamp(epoch_time)
         date_time_formal = dt_object.strftime("%A, %d %B %Y at %I:%M %p")
@@ -2074,19 +2078,19 @@ if(is_raspberrypi()):
                 cv2.imshow("Output", img)
             else:
                 cv2.imshow("Output", img)
-        # press 's' to take still image from camera and recognise number plate
+        # press 's' to take still image from camera and recognise license plate
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
-            detect_number_plate()
+            detect_license_plate()
 
         # press 'h' to show keyboard shortcuts
         if keyboard.is_pressed("h"):
             keyboard_shortcuts()
 
-        # press 't' to write the detected number plate to text file
+        # press 't' to write the detected license plate to text file
         if keyboard.is_pressed("t"):
             write_to_text_file()
 
-        # press 'd' to write the detected number plate to database
+        # press 'd' to write the detected license plate to database
         if keyboard.is_pressed("d"):
             write_to_database()
                 
@@ -2099,15 +2103,15 @@ if(is_raspberrypi()):
         if keyboard.is_pressed("f"):
             find_data()
 
-        # press 'r' to register the detected number plate
+        # press 'r' to register the detected license plate
         if keyboard.is_pressed("r"):
             register()
-        # press 'c' to check if the detected number plate is registered or expired
+        # press 'c' to check if the detected license plate is registered or expired
         if keyboard.is_pressed("c"):
             check_if_registered_or_expired()
-        # press 'e' to send bulk email of the detected number plate with plate image as attachment
+        # press 'e' to send bulk email of the detected license plate with plate image as attachment
         if keyboard.is_pressed("e"):
-            send_email_of_detected_number_plate()
+            send_email_of_detected_license_plate()
 
         # press 'm' to generate money receipt of all dues and send bulk email
         if keyboard.is_pressed("m"):
@@ -2140,19 +2144,19 @@ else:
             else:
                 cv2.imshow("Output", img)
 
-        # press 's' to take still image from camera and recognise number plate
+        # press 's' to take still image from camera and recognise license plate
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
-            detect_number_plate()
+            detect_license_plate()
 
         # press 'h' to show keyboard shortcuts
         if keyboard.is_pressed("h"):
             keyboard_shortcuts()
 
-        # press 't' to write the detected number plate to text file
+        # press 't' to write the detected license plate to text file
         if keyboard.is_pressed("t"):
             write_to_text_file()
 
-        # press 'd' to write the detected number plate to database
+        # press 'd' to write the detected license plate to database
         if keyboard.is_pressed("d"):
             write_to_database()
                 
@@ -2165,15 +2169,16 @@ else:
         if keyboard.is_pressed("f"):
             find_data()
 
-        # press 'r' to register the detected number plate
+        # press 'r' to register the detected license plate
         if keyboard.is_pressed("r"):
             register()
-        # press 'c' to check if the detected number plate is registered or expired
+        # press 'c' to check if the detected license plate is registered or expired
         if keyboard.is_pressed("c"):
             check_if_registered_or_expired()
-        # press 'e' to send bulk email of the detected number plate with plate image as attachment
+            
+        # press 'e' to send bulk email of the detected license plate with plate image as attachment
         if keyboard.is_pressed("e"):
-            send_email_of_detected_number_plate()
+            send_email_of_detected_license_plate()
 
         # press 'm' to generate money receipt of all dues and send bulk email
         if keyboard.is_pressed("m"):
