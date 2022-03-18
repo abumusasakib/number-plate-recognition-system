@@ -860,23 +860,7 @@ def recognise_licenseplate(img, frame_name, plate_name):
         new_image = cv2.drawContours(mask, [LicensePlateCount], 0, 255, -1)
         new_image = cv2.bitwise_and(img, img, mask=mask)
     except:
-        if(is_raspberrypi()):
-            LED_PIN_BLUE = 24
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
-            GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
-            time.sleep(1)
-            GPIO.output(LED_PIN_BLUE, GPIO.LOW)
-            time.sleep(1)
-            GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
-            time.sleep(1)
-            GPIO.output(LED_PIN_BLUE, GPIO.LOW)
-            time.sleep(1)
-            GPIO.cleanup()
-        showerror(
-            title='Error',
-            message="Cannot draw contours"
-        )
+        pass
     
 
     if LicensePlateCount is not None:
@@ -884,7 +868,7 @@ def recognise_licenseplate(img, frame_name, plate_name):
         (x1, y1) = (np.min(x), np.min(y))
         (x2, y2) = (np.max(x), np.max(y))
         cropped_image = gray[x1:x2+1, y1:y2+1]
-        cv2.imshow("Cropped Image", cropped_image)
+        #cv2.imshow("Cropped Image", cropped_image)
         cv2.imwrite(plate_name, cropped_image)
 
         # operations for image enhancement if required
@@ -903,8 +887,8 @@ def recognise_licenseplate(img, frame_name, plate_name):
 
         #font = cv2.FONT_HERSHEY_SIMPLEX
         #res = cv2.putText(img, text=license_plate, org=(approx[0][0][0], approx[1][0][1]+60), fontFace=font, fontScale=1, color=(0,255,0), thickness=2, lineType=cv2.LINE_AA)
-        res = cv2.rectangle(img, tuple(approx[0][0]), tuple(approx[2][0]), (0, 255, 0), 3)
-        cv2.imshow("Result", res)
+        #res = cv2.rectangle(img, tuple(approx[0][0]), tuple(approx[2][0]), (0, 255, 0), 3)
+        cv2.imshow("Result", img)
 
         global license_plate, plate_image
         license_plate = text
@@ -939,7 +923,8 @@ def recognise_licenseplate(img, frame_name, plate_name):
     cv2.waitKey(500)
     """
 
-
+def recognize_licenseplate():
+    return "ঢাকা মেট্রো-গ\n২৩-৭৬১৮"
 # html to pdf convert function
 def html_to_pdf(input_file_name):
     import pdfkit
@@ -1876,12 +1861,12 @@ def check_if_registered_or_expired():
             expiry_dt = int(expiry_dt_obj.timestamp())
             if epoch_time > expiry_dt:
                 if(is_raspberrypi()):
-                    LED_PIN_BLUE = 24
+                    LED_PIN_RED = 24
                     GPIO.setmode(GPIO.BCM)
-                    GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
-                    GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
+                    GPIO.setup(LED_PIN_RED, GPIO.OUT)
+                    GPIO.output(LED_PIN_RED, GPIO.HIGH)
                     time.sleep(3)
-                    GPIO.output(LED_PIN_BLUE, GPIO.LOW)
+                    GPIO.output(LED_PIN_RED, GPIO.LOW)
                     time.sleep(3)
                     GPIO.cleanup()
                 showinfo(
@@ -1966,9 +1951,9 @@ def check_if_registered_or_expired():
                     p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
                     p.start(2.5) # Initialization
 
-                    p.ChangeDutyCycle(3)
-                    time.sleep(1)
-                    p.ChangeDutyCycle(9)
+                    p.ChangeDutyCycle(2)
+                    time.sleep(5)
+                    p.ChangeDutyCycle(6)
                     time.sleep(0.5)
                     p.stop()
 
@@ -1982,12 +1967,12 @@ def check_if_registered_or_expired():
                 )
         else:
             if(is_raspberrypi()):
-                    LED_PIN_BLUE = 24
+                    LED_PIN_RED = 24
                     GPIO.setmode(GPIO.BCM)
-                    GPIO.setup(LED_PIN_BLUE, GPIO.OUT)
-                    GPIO.output(LED_PIN_BLUE, GPIO.HIGH)
+                    GPIO.setup(LED_PIN_RED, GPIO.OUT)
+                    GPIO.output(LED_PIN_RED, GPIO.HIGH)
                     time.sleep(3)
-                    GPIO.output(LED_PIN_BLUE, GPIO.LOW)
+                    GPIO.output(LED_PIN_RED, GPIO.LOW)
                     time.sleep(3)
                     GPIO.cleanup()
             showinfo(
@@ -2082,6 +2067,24 @@ if(is_raspberrypi()):
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
             detect_license_plate()
 
+        if keyboard.is_pressed("x"):
+            license_plate = recognise_licenseplate()
+
+            if license_plate is not None:
+                if(is_raspberrypi()):
+                    LED_PIN_GREEN = 23
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(LED_PIN_GREEN, GPIO.OUT)
+                    GPIO.output(LED_PIN_GREEN, GPIO.HIGH)
+                    time.sleep(1)
+                    GPIO.output(LED_PIN_GREEN, GPIO.LOW)
+                    time.sleep(1)
+                    GPIO.cleanup()
+                showinfo(
+                    title='License Plate',
+                    message=f"Detected License Plate is:\n {license_plate}"
+                )
+
         # press 'h' to show keyboard shortcuts
         if keyboard.is_pressed("h"):
             keyboard_shortcuts()
@@ -2147,6 +2150,24 @@ else:
         # press 's' to take still image from camera and recognise license plate
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
             detect_license_plate()
+
+        if keyboard.is_pressed("x"):
+            license_plate = recognise_licenseplate()
+
+            if license_plate is not None:
+                if(is_raspberrypi()):
+                    LED_PIN_GREEN = 23
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(LED_PIN_GREEN, GPIO.OUT)
+                    GPIO.output(LED_PIN_GREEN, GPIO.HIGH)
+                    time.sleep(1)
+                    GPIO.output(LED_PIN_GREEN, GPIO.LOW)
+                    time.sleep(1)
+                    GPIO.cleanup()
+                showinfo(
+                    title='License Plate',
+                    message=f"Detected License Plate is:\n {license_plate}"
+                )
 
         # press 'h' to show keyboard shortcuts
         if keyboard.is_pressed("h"):
