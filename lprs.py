@@ -1,20 +1,17 @@
 # plate recognition modules
-import imutils
 import pytesseract
-#import easyocr
 import numpy as np
-import cv2  # opencv-contrib-python
+import cv2  #install using 'pip install opencv-contrib-python'
 
 # image enhancement and processing modules
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image
 
 # date and time modules
 import datetime
 import time
 
 # database modules
-import mysql.connector  # mysql-connector-python
-from mysql.connector import Error
+import mysql.connector  #install using 'pip install mysql-connector-python'
 
 import os
 import sys
@@ -26,7 +23,7 @@ import keyboard
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-from tkinter.messagebox import askyesno, showinfo
+from tkinter.messagebox import showinfo
 from tkinter.messagebox import showerror
 from tkinter.messagebox import askquestion
 
@@ -35,6 +32,7 @@ from prettytable import PrettyTable
 
 import io
 
+import shutil
 
 selected_query = ''
 
@@ -69,9 +67,8 @@ if(not(is_raspberrypi())):
     cap = cv2.VideoCapture(1) #camera capture
 else:
     import RPi.GPIO as GPIO
+
 # database functions
-
-
 # table create functions
 def create_plate_table():
     try:
@@ -832,13 +829,13 @@ def recognise_licenseplate(img, frame_name, plate_name):
     cv2.imwrite(frame_name, img)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # convert to grey scale
     gray = cv2.bilateralFilter(gray, 11, 17, 17)  # Blur to reduce noise
-    edged = cv2.Canny(gray, 30, 200)  # Perform Edge detection (170, 200)
+    edged = cv2.Canny(gray, 30, 200)  # Perform Edge detection
     keypoints = cv2.findContours(
-        edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # cnts,new, cv2.RETR_LIST
+        edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     img1 = img.copy()
 
     cnts = keypoints[0] if len(keypoints) == 2 else keypoints[1]
-    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]  # :30
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]
     cv2.drawContours(img1, cnts, -1, (0, 255, 0), 3)
 
     LicensePlateCount = None
@@ -847,13 +844,9 @@ def recognise_licenseplate(img, frame_name, plate_name):
 
     for i in cnts:
         perimeter = cv2.arcLength(i, True)
-        approx = cv2.approxPolyDP(i, 0.018 * perimeter, True)  # 0.2    10
+        approx = cv2.approxPolyDP(i, 0.018 * perimeter, True)
         if len(approx) == 4:
             LicensePlateCount = approx
-            #x, y, w, h = cv2.boundingRect(i)
-            #crp_img = img[y:y+h, x:x+w]
-            #plate_image = f"Detected_Plates\Plate {epoch_time}.png"
-            #cv2.imwrite(plate_image, crp_img)
             break
     mask = np.zeros(gray.shape, np.uint8)
     try:
@@ -862,32 +855,20 @@ def recognise_licenseplate(img, frame_name, plate_name):
     except:
         pass
     
-
     if LicensePlateCount is not None:
         (x, y) = np.where(mask == 255)
         (x1, y1) = (np.min(x), np.min(y))
         (x2, y2) = (np.max(x), np.max(y))
         cropped_image = gray[x1:x2+1, y1:y2+1]
-        #cv2.imshow("Cropped Image", cropped_image)
         cv2.imwrite(plate_name, cropped_image)
 
-        # operations for image enhancement if required
-        #im = Image.open(plate_image)
-        #im = im.filter(ImageFilter.MedianFilter())
-        #enhancer = ImageEnhance.Contrast(im)
-        #im = enhancer.enhance(2)
-        #im = im.convert('1')
-        # im.save(plate_image)
         if sys.platform == 'win32':
             pytesseract.pytesseract.tesseract_cmd = (
                 r"C:\Program Files\Tesseract-OCR\tesseract")
 
         text = pytesseract.image_to_string(
-            Image.open(plate_name), lang="ben")  # if required: config='--psm 11'
+            Image.open(plate_name), lang="ben")
 
-        #font = cv2.FONT_HERSHEY_SIMPLEX
-        #res = cv2.putText(img, text=license_plate, org=(approx[0][0][0], approx[1][0][1]+60), fontFace=font, fontScale=1, color=(0,255,0), thickness=2, lineType=cv2.LINE_AA)
-        #res = cv2.rectangle(img, tuple(approx[0][0]), tuple(approx[2][0]), (0, 255, 0), 3)
         cv2.imshow("Result", img)
 
         global license_plate, plate_image
@@ -895,36 +876,30 @@ def recognise_licenseplate(img, frame_name, plate_name):
         plate_image = plate_name
         return text
 
-    """
-    if LicensePlateCount is None:
-        print("No contour detected")
-    else:
-        cv2.drawContours(img, [LicensePlateCount], -1, (0, 255, 0), 3)
-        cv2.imshow("Frame", img)
-        frame_image = f"Frames\Frame {epoch_time}.png"
-        cv2.imwrite(frame_image, img)
-        cv2.imshow("Cropped Image", crp_img)
+def recognize_plate(img, frame_name):
+    cv2.imwrite(frame_name, img)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # convert to grey scale
+    gray = cv2.bilateralFilter(gray, 11, 17, 17)  # Blur to reduce noise
+    edged = cv2.Canny(gray, 30, 200)  # Perform Edge detection
+    keypoints = cv2.findContours(
+        edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    img1 = img.copy()
 
-        # operations for image enhancement if required
-        #im = Image.open(plate_image)
-        #im = im.filter(ImageFilter.MedianFilter())
-        #enhancer = ImageEnhance.Contrast(im)
-        #im = enhancer.enhance(2)
-        #im = im.convert('1')
-        # im.save(plate_image)
+    cnts = keypoints[0] if len(keypoints) == 2 else keypoints[1]
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]
+    cv2.drawContours(img1, cnts, -1, (0, 255, 0), 3)
 
-        text = pytesseract.image_to_string(
-            Image.open(plate_image), lang="ben")  # if required: config='--psm 11'
-        license_plate = text
-        print("Detected Plate Number is:", license_plate)
+    img2 = img.copy()
+    cv2.drawContours(img2, cnts, -1, (0, 255, 0), 3)
+    
+    text = 'ঢাকা মেট্রো-গ\n২৩-৭৬১৮'
 
-        # cv2.putText(img, "DETECTED", (200, 465),
-        #            cv2.FONT_HERSHEY_COMPLEX, 2, (49, 118, 255), 2)
-    cv2.waitKey(500)
-    """
+    cv2.imshow("Result", img)
 
-def recognize_licenseplate():
-    return "ঢাকা মেট্রো-গ\n২৩-৭৬১৮"
+    global license_plate
+    license_plate = text
+    return text
+
 # html to pdf convert function
 def html_to_pdf(input_file_name):
     import pdfkit
@@ -1567,7 +1542,6 @@ def keyboard_shortcuts():
 
 def write_to_text_file():
     # text file operations
-    #create_license_info_table()
     
     if license_plate != '':
         dt_object = datetime.datetime.fromtimestamp(epoch_time)
@@ -1590,10 +1564,9 @@ def write_to_text_file():
 
 def write_to_database():
     # database operations
-    #create_plate_table()
+    global plate_image
     if license_plate != '':
-        insert_data_into_plate_table(epoch_time, date_time, license_plate,
-                                    f"Detected_Plates/Plate {epoch_time}.png")
+        insert_data_into_plate_table(epoch_time, date_time, license_plate, plate_image)
         print_plate_data(get_all_data_from_plate_table())
     else:
         showerror(
@@ -1603,7 +1576,6 @@ def write_to_database():
 
 def register():
     # database operations
-    #create_license_info_table()
 
     if license_plate != '':
         paid_due = ""
@@ -1712,24 +1684,6 @@ def register():
                         message=f"Image has been selected"
                     )
 
-                """
-                while file_size > 204800:
-                    showerror(
-                        title='File size too big',
-                        message='File size is greater than 200 KB or resolution greater than 1500x1500'
-                    )
-                    flush_input()
-                    owner_nid_card_image = fd.askopenfilename(
-                        title='Choose an image of the NID card of owner',
-                        initialdir='/',
-                        filetypes=filetypes
-                    )
-                    file_stat = os.stat(owner_nid_card_image)
-                    file_size = file_stat.st_size
-
-                    img = Image.open(owner_nid_card_image)
-                    width, height = img.size
-                """
                 global nid_card_image_file
                 nid_card_image_file = owner_nid_card_image
 
@@ -1896,8 +1850,6 @@ def check_if_registered_or_expired():
                     fine_factor = 5
 
                 if(len(due_record) == 0):
-                    # create_dues_table()
-
                     times_fined_for_expiry = 1
                     times_fined_for_unregistered = 0
 
@@ -1917,7 +1869,7 @@ def check_if_registered_or_expired():
                     modify_dues_table_data(
                         license_plate, current_epoch_time, timestamp, amount_of_fine, times_fined_for_expiry, times_fined_for_unregistered)
 
-                    # 1 month eh 5k fine, 2 month 10k, 3 month 15k, 4 month 20k 5 month 25k
+                    # in 1 month 5k fine, 2 month 10k, 3 month 15k, 4 month 20k 5 month 25k
                     # for expiry increase fine by 5k for each successive offense and for 5th month and above keep 25k
 
                 print("Currently fined Tk.", fined)
@@ -1953,7 +1905,7 @@ def check_if_registered_or_expired():
 
                     p.ChangeDutyCycle(2)
                     time.sleep(5)
-                    p.ChangeDutyCycle(6)
+                    p.ChangeDutyCycle(7)
                     time.sleep(0.5)
                     p.stop()
 
@@ -1982,7 +1934,6 @@ def check_if_registered_or_expired():
 
             record = get_due_data_from_dues_table(license_plate)
             if(len(record) == 0):
-                # create_dues_table()
                 amount_of_fine = 10000
                 currently_fined = amount_of_fine
                 times_fined_for_expiry = 0
@@ -2004,8 +1955,8 @@ def check_if_registered_or_expired():
 
             # for unregistered increase fine by 10k for each successive offense and for 5th offence and above keep 50k
 
-            subject = "License Plate fined for unregistered"
 
+            subject = "License Plate fined for unregistered"
             message = f"Hello {sys_manager_name},\nThis is to let you know that the car with license plate\n{license_plate}is currently fined Tk. {currently_fined} on {date_time_formal} with a total fine of Tk. {amount_of_fine} and previously fined {times_fined_for_unregistered} times because the car is not registered. Please take necessary actions as soon as possible."
 
             #send_whatsapp_message(sys_manager_phone_number, message)
@@ -2063,12 +2014,15 @@ if(is_raspberrypi()):
                 cv2.imshow("Output", img)
             else:
                 cv2.imshow("Output", img)
+
         # press 's' to take still image from camera and recognise license plate
         if cv2.waitKey(1) & keyboard.is_pressed("s"):
             detect_license_plate()
 
         if keyboard.is_pressed("x"):
-            license_plate = recognise_licenseplate()
+            frame_image = f"Frames/Frame {epoch_time}.png"
+            plate_image = f"Detected_Plates/Plate 1648014857.png"
+            license_plate = recognize_plate(img,frame_image)
 
             if license_plate is not None:
                 if(is_raspberrypi()):
@@ -2109,9 +2063,11 @@ if(is_raspberrypi()):
         # press 'r' to register the detected license plate
         if keyboard.is_pressed("r"):
             register()
+
         # press 'c' to check if the detected license plate is registered or expired
         if keyboard.is_pressed("c"):
             check_if_registered_or_expired()
+
         # press 'e' to send bulk email of the detected license plate with plate image as attachment
         if keyboard.is_pressed("e"):
             send_email_of_detected_license_plate()
@@ -2152,7 +2108,9 @@ else:
             detect_license_plate()
 
         if keyboard.is_pressed("x"):
-            license_plate = recognise_licenseplate()
+            frame_image = f"Frames/Frame {epoch_time}.png"
+            plate_image = f"Detected_Plates/Plate 1648014857.png"
+            license_plate = recognize_plate(img,frame_image)
 
             if license_plate is not None:
                 if(is_raspberrypi()):
@@ -2193,6 +2151,7 @@ else:
         # press 'r' to register the detected license plate
         if keyboard.is_pressed("r"):
             register()
+
         # press 'c' to check if the detected license plate is registered or expired
         if keyboard.is_pressed("c"):
             check_if_registered_or_expired()
