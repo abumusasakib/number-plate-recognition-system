@@ -635,15 +635,15 @@ def send_sms(phone_number, message):
     url = "https://api.smsq.global/api/v2/SendSMS"
 
     querystring = {
-        "SenderId": "8804445649826",
+        "SenderId": "8809617xxxxxx",
         "Is_Unicode": True,
         "Is_Flash": False,
         "SchedTime": "",
         "GroupId": "",
         "Message": message,
         "MobileNumbers": phone_number,
-        "ApiKey": "WDoKYJPIUu/5jVnfTwR1tTb5z46ZQ3fsYzqlCkg6mTI=",
-        "ClientId": "24502137-4ea0-4be2-8db8-02e087f84118"
+        "ApiKey": "*your_smsq_api_key*",
+        "ClientId": "*your_smsq_client_id*"
     }
 
     headers = {
@@ -689,7 +689,7 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
 
     print(f"Sending email to {sender_name}")
     envelope = Envelope(
-        from_addr=(u'sakib4@live.com', u'License Management Department'),
+        from_addr=(u'*user*@*domain*.com', u'License Management Department'),
         to_addr=(email_address, sender_name),
         subject=subject,
         text_body=message_text
@@ -698,8 +698,8 @@ def send_email_with_attachment(email_address, sender_name, subject, message_text
         envelope.add_attachment(attachment_file)
     
     # Send the envelope using an ad-hoc connection...
-    envelope.send('smtp.office365.com', login='sakib4@live.com',
-                password='theMGFboys01', tls=True)
+    envelope.send('smtp.*smtp_server*.com', login='*user*@*domain*.com',
+                password='*your_email_account_ps*', tls=True)
 
     showinfo(
         title='Email',
@@ -758,11 +758,11 @@ def send_bulk_email_with_template_and_attachment(contacts_file, starting_templat
 
     print("Setting up email")
     # set up the SMTP server
-    s = smtplib.SMTP(host='smtp.office365.com', port=587)
+    s = smtplib.SMTP(host='smtp.*smtp_server*.com', port=123)
     s.starttls()
 
-    MY_ADDRESS = "sakib4@live.com"
-    PASSWORD = "theMGFboys01"
+    MY_ADDRESS = "*user*@*domain*.com"
+    PASSWORD = "*your_email_account_ps*"
     s.login(MY_ADDRESS, PASSWORD)
     print("Set up complete")
 
