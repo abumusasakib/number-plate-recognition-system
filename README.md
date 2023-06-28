@@ -16,7 +16,7 @@ We are making a framework to recognize the number plates and speed of a vehicle.
 7. **XAMPP** (for running the mysql server)
 
     * for windows, install from **<https://www.apachefriends.org/download.html>** and set root password by following this link **<https://kinsta.com/knowledgebase/xampp-mysql-password/>**
-    * for linux follow the instructions from **<https://www.apachefriends.org/faq_linux.html>** and start server with *sudo /opt/lampp/lampp* start and stop with *sudo /opt/lampp/lampp stop*
+    * for linux follow the instructions from **<https://www.apachefriends.org/faq_linux.html>** and start server with *sudo /opt/lampp/lampp start* and stop with *sudo /opt/lampp/lampp stop*
     * for raspberry pi follow instructions at **<https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/>**
 
 8. **Microsoft .NET 4.0** (for Rebex Tiny SFTP Server on Windows)
