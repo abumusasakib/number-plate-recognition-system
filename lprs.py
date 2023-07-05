@@ -1760,7 +1760,7 @@ def register():
                         message="Date time format is incorrect"
                     )
 
-                global license_plate, expiry_dt_timestamp
+                global license_plate
                 owner_name = owner_name_field.get()
                 owner_phone_num = owner_contact_no_field.get()
                 owner_email = owner_email_id_field.get()
