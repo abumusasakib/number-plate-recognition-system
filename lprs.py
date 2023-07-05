@@ -32,8 +32,6 @@ from prettytable import PrettyTable
 
 import io
 
-import shutil
-
 selected_query = ''
 
 # license plate data
